@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.omar.time.dto.AllProjectsDTO;
 import com.omar.time.dto.ProjectCreationDTO;
 import com.omar.time.dto.ProjectDTO;
 import com.omar.time.model.Project;
@@ -23,9 +24,9 @@ public class ProjectService {
 	private ProjectRepository projectRepository;
 	
 	
-	public Page<ProjectDTO> getAll(UserPrincipal userPrincipal, Pageable pageable) {
+	public Page<AllProjectsDTO> getAll(UserPrincipal userPrincipal, Pageable pageable) {
 		Page<Project> page = projectRepository.findByCreatedBy(userPrincipal.getId(), pageable); 
-		return new PageImpl<ProjectDTO>(ObjectMapperUtils.mapAll(page.getContent(), ProjectDTO.class), pageable, page.getTotalElements());
+		return new PageImpl<AllProjectsDTO>(ObjectMapperUtils.mapAll(page.getContent(), AllProjectsDTO.class), pageable, page.getTotalElements());
 	}
 	
 	public ProjectDTO get(long id) {

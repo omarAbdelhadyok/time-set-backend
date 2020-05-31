@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.omar.time.dto.AllProjectsDTO;
 import com.omar.time.dto.ProjectCreationDTO;
 import com.omar.time.dto.ProjectDTO;
 import com.omar.time.model.Project;
@@ -28,7 +29,7 @@ public class ProjectController {
 	
 	
 	@GetMapping
-	public Page<ProjectDTO> getAll(@CurrentUser UserPrincipal userPrincipal, Pageable pageable) {
+	public Page<AllProjectsDTO> getAll(@CurrentUser UserPrincipal userPrincipal, Pageable pageable) {
 		return projectService.getAll(userPrincipal, pageable);
 	}
 	

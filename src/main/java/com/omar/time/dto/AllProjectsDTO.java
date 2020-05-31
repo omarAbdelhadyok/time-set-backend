@@ -1,11 +1,8 @@
 package com.omar.time.dto;
 
-import java.util.List;
-
-import com.omar.time.model.Stack;
 import com.omar.time.model.StatusName;
 
-public class ProjectDTO extends UserDateDTO {
+public class AllProjectsDTO extends UserDateDTO {
 
 	private long id;
 	
@@ -14,8 +11,6 @@ public class ProjectDTO extends UserDateDTO {
 	private String description;
 	
 	private StatusName status;
-	
-	private List<Stack> stacks;
 	
 
 	public long getId() {
@@ -48,14 +43,6 @@ public class ProjectDTO extends UserDateDTO {
 
 	public void setStatus(StatusName status) {
 		this.status = status;
-	}
-
-	public List<Stack> getStacks() {
-		return stacks;
-	}
-
-	public void setStacks(List<Stack> stacks) {
-		this.stacks = stacks;
 	}
 
 }
