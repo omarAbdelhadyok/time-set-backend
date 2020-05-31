@@ -42,18 +42,18 @@ public class Task extends UserDateAudit {
 	private StatusName status;
 	
 	@ManyToOne
-    @JoinColumn(name = "project_id", updatable = false)
+    @JoinColumn(name = "card_id", updatable = false)
     @NotNull
-    private Project project;
+    private Card card;
 	
 	public Task() {}
 
-	public Task(String task, int duration, UnitName unit, StatusName status, @NotNull Project project) {
+	public Task(String task, int duration, UnitName unit, StatusName status, Card card) {
 		this.task = task;
 		this.duration = duration;
 		this.unit = unit;
 		this.status = status;
-		this.project = project;
+		this.card = card;
 	}
 
 	public long getId() {
@@ -96,14 +96,14 @@ public class Task extends UserDateAudit {
 		this.status = status;
 	}
 
-	public void setProject(Project project) {
-		this.project = project;
+	public void setCard(Card card) {
+		this.card = card;
 	}
 
 	@Override
 	public String toString() {
 		return "Task [id=" + id + ", task=" + task + ", duration=" + duration + ", unit=" + unit + ", status=" + status
-				+ ", project=" + project + ", careate_at=" + getCreatedAt() + ", updated_at" + getUpdatedAt() + "]";
+				+ ", card=" + card + ", careate_at=" + getCreatedAt() + ", updated_at" + getUpdatedAt() + "]";
 	}
 	
 }

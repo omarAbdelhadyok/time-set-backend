@@ -1,6 +1,5 @@
 package com.omar.time.dto;
 
-import com.omar.time.model.Project;
 import com.omar.time.model.StatusName;
 import com.omar.time.model.UnitName;
 
@@ -16,8 +15,6 @@ public class TaskDTO extends UserDateDTO {
 	
 	private StatusName status;
 	
-	private Project project;
-
 	public long getId() {
 		return id;
 	}
@@ -57,14 +54,5 @@ public class TaskDTO extends UserDateDTO {
 	public void setStatus(StatusName status) {
 		this.status = status;
 	}
-
-	public Project getProject() {
-		return project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
-	}
-	
 	
 }

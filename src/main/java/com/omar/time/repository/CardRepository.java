@@ -7,12 +7,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.omar.time.model.Task;
+import com.omar.time.model.Card;
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task, Long> {
+public interface CardRepository extends JpaRepository<Card, Long> {
 
-	Page<Task> findByCardId(long cardId, Pageable pageable);
-    Optional<Task> findByIdAndCardId(long id, long cardId);
-    
+	Page<Card> findByStackId(long stackId, Pageable pageable);
+    Optional<Card> findByIdAndStackId(long id, long stackId);
+	
 }

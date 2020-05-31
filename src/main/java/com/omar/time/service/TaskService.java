@@ -12,12 +12,11 @@ import com.omar.time.dto.TaskCreationDTO;
 import com.omar.time.dto.TaskDTO;
 import com.omar.time.dto.TaskStatusUpdateDTO;
 import com.omar.time.dto.TaskUpdatingDTO;
-import com.omar.time.model.Project;
+import com.omar.time.model.Card;
 import com.omar.time.model.StatusName;
 import com.omar.time.model.Task;
-import com.omar.time.repository.ProjectRepository;
+import com.omar.time.repository.CardRepository;
 import com.omar.time.repository.TaskRepository;
-import com.omar.time.security.UserPrincipal;
 import com.omar.time.util.ObjectMapperUtils;
 
 @Service
@@ -27,21 +26,16 @@ public class TaskService {
 	private TaskRepository taskRepository;
 	
 	@Autowired
-	private ProjectRepository projectRepository;
+	private CardRepository cardRepository;
 	
 	
-	public Page<TaskDTO> getAll(long projectId, Pageable pageable) {
-		Page<Task> page = taskRepository.findByProjectId(projectId, pageable);
-		return new PageImpl<TaskDTO>(ObjectMapperUtils.mapAll(page.getContent(), TaskDTO.class), pageable, page.getTotalElements());
-	}
-	
-	public Page<TaskDTO> getAll(UserPrincipal userPrincipal, Pageable pageable) {
-		Page<Task> page = taskRepository.findByCreatedBy(userPrincipal.getId(), pageable);
+	public Page<TaskDTO> getAll(long cardId, Pageable pageable) {
+		Page<Task> page = taskRepository.findByCardId(cardId, pageable);
 		return new PageImpl<TaskDTO>(ObjectMapperUtils.mapAll(page.getContent(), TaskDTO.class), pageable, page.getTotalElements());
 	}
 	
 	public TaskDTO get(long projectId, long id) {
-		Optional<Task> result = taskRepository.findByIdAndProjectId(id, projectId);
+		Optional<Task> result = taskRepository.findByIdAndCardId(id, projectId);
 		
 		Task task = null;
 		
@@ -54,22 +48,22 @@ public class TaskService {
 		return ObjectMapperUtils.map(task, TaskDTO.class);
 	}
 	
-	public Task create(TaskCreationDTO taskCreationDTO, long projectId) {
-		Optional<Project> result = projectRepository.findById(projectId);
+	public Task create(TaskCreationDTO taskCreationDTO, long cardId) {
+		Optional<Card> result = cardRepository.findById(cardId);
 		
-		Project project = null;
+		Card card = null;
 		
 		if(result.isPresent()) {
-			project = result.get();
+			card = result.get();
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new RuntimeException("Card with id of " + cardId + " was not found");
 		}
 		
 		Task task = ObjectMapperUtils.map(taskCreationDTO, Task.class);
 		
 		task.setStatus(StatusName.ACTIVE);
 		
-		task.setProject(project);
+		task.setCard(card);
         
 		return taskRepository.save(task);
     }

@@ -10,6 +10,7 @@ import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -58,6 +59,13 @@ import com.omar.time.security.JwtAuthenticationFilter;
 //customize the security configurations by overriding its methods.
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	private static final String[] AUTH_WHITELIST = {
+	        "/swagger-resources/**",
+	        "/swagger-ui.html",
+	        "/v2/api-docs",
+	        "/webjars/**"
+	};
+	
 	//implementation for UserDetailsService that 
 	//has a method: UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 	//that should allow spring security to load user details
@@ -151,5 +159,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Add our custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
+    }
+    
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(AUTH_WHITELIST);
     }
 }

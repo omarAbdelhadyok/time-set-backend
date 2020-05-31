@@ -19,8 +19,6 @@ import com.omar.time.model.audit.UserDateAudit;
 @Table(name = "projects")
 public class Project extends UserDateAudit {
 	
-	
-
 	/**
 	 * 
 	 */
@@ -40,12 +38,9 @@ public class Project extends UserDateAudit {
 	
 	@NotNull
 	private StatusName status;
-	
+		
 	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<Comment> comments;
-	
-	@OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<Task> tasks;
+	private List<Stack> stacks;
 	
 	public Project() {}
 
@@ -87,20 +82,18 @@ public class Project extends UserDateAudit {
 		this.status = status;
 	}
 
-	public List<Comment> getComments() {
-		return comments;
+	public List<Stack> getStacks() {
+		return stacks;
 	}
 
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
+	public void setStacks(List<Stack> stacks) {
+		this.stacks = stacks;
 	}
 
-	public List<Task> getTasks() {
-		return tasks;
-	}
-
-	public void setTasks(List<Task> tasks) {
-		this.tasks = tasks;
+	@Override
+	public String toString() {
+		return "Project [id=" + id + ", title=" + title + ", description=" + description + ", status=" + status
+				+ ", stacks=" + stacks + "]";
 	}
 	
 }

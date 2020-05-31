@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.omar.time.dto.CommentCreationDTO;
 import com.omar.time.dto.CommentDTO;
+import com.omar.time.model.Card;
 import com.omar.time.model.Comment;
-import com.omar.time.model.Project;
+import com.omar.time.repository.CardRepository;
 import com.omar.time.repository.CommentRepository;
-import com.omar.time.repository.ProjectRepository;
 import com.omar.time.util.ObjectMapperUtils;
 
 @Service
@@ -23,16 +23,16 @@ public class CommentService {
 	private CommentRepository commentRepository;
 	
 	@Autowired
-	private ProjectRepository projectRepository;
+	private CardRepository cardRepository;
 	
 	
-	public Page<CommentDTO> getAll(long projectId, Pageable pageable) {
-		Page<Comment> page = commentRepository.findByProjectId(projectId, pageable);
+	public Page<CommentDTO> getAll(long cardId, Pageable pageable) {
+		Page<Comment> page = commentRepository.findByCardId(cardId, pageable);
 		return new PageImpl<CommentDTO>(ObjectMapperUtils.mapAll(page.getContent(), CommentDTO.class), pageable, page.getTotalElements());
 	}
 	
 	public CommentDTO get(long projectId, long id) {
-		Optional<Comment> result = commentRepository.findByIdAndProjectId(id, projectId);
+		Optional<Comment> result = commentRepository.findByIdAndCardId(id, projectId);
 		
 		Comment comment = null;
 		
@@ -45,20 +45,20 @@ public class CommentService {
 		return ObjectMapperUtils.map(comment, CommentDTO.class);
 	}
 	
-	public Comment create(CommentCreationDTO commentCreationDTO, long projectId) {
-		Optional<Project> result = projectRepository.findById(projectId);
+	public Comment create(CommentCreationDTO commentCreationDTO, long cardId) {
+		Optional<Card> result = cardRepository.findById(cardId);
 		
-		Project project = null;
+		Card card = null;
 		
 		if(result.isPresent()) {
-			project = result.get();
+			card = result.get();
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new RuntimeException("Card with id of " + cardId + " was not found");
 		}
 		
 		Comment comment = ObjectMapperUtils.map(commentCreationDTO, Comment.class);
 		
-		comment.setProject(project);
+		comment.setCard(card);
         
 		return commentRepository.save(comment);
     }

@@ -18,8 +18,6 @@ import com.omar.time.dto.TaskDTO;
 import com.omar.time.dto.TaskStatusUpdateDTO;
 import com.omar.time.dto.TaskUpdatingDTO;
 import com.omar.time.model.Task;
-import com.omar.time.security.CurrentUser;
-import com.omar.time.security.UserPrincipal;
 import com.omar.time.service.TaskService;
 
 @RestController
@@ -29,24 +27,19 @@ public class TaskController {
 	@Autowired
 	private TaskService taskService;
 	
-	@GetMapping("/project/{projectId}")
-	public Page<TaskDTO> getAll(@PathVariable long projectId, Pageable pagable) {
-		return taskService.getAll(projectId, pagable);
+	@GetMapping("/card/{cardId}")
+	public Page<TaskDTO> getAll(@PathVariable long cardId, Pageable pagable) {
+		return taskService.getAll(cardId, pagable);
 	}
 	
-	@GetMapping
-	public Page<TaskDTO> getAll(@CurrentUser UserPrincipal userPrincipal, Pageable pagable) {
-		return taskService.getAll(userPrincipal, pagable);
+	@GetMapping("/{cardId}/{id}")
+	public TaskDTO get(@PathVariable long cardId, @PathVariable long id) {
+		return taskService.get(cardId, id);
 	}
 	
-	@GetMapping("/{projectId}/{id}")
-	public TaskDTO get(@PathVariable long projectId, @PathVariable long id) {
-		return taskService.get(projectId, id);
-	}
-	
-	@PostMapping("/{projectId}")
-	public Task create(@RequestBody TaskCreationDTO taskCreationDTO, @PathVariable long projectId) {
-		return taskService.create(taskCreationDTO, projectId);
+	@PostMapping("/{cardId}")
+	public Task create(@RequestBody TaskCreationDTO taskCreationDTO, @PathVariable long cardId) {
+		return taskService.create(taskCreationDTO, cardId);
 	}
 	
 	@PutMapping("/{id}")

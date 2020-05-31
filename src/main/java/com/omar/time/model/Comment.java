@@ -16,9 +16,6 @@ import com.omar.time.model.audit.UserDateAudit;
 @Table(name = "comments")
 public class Comment extends UserDateAudit {
 
-	
-	
-
 	/**
 	 * 
 	 */
@@ -33,13 +30,13 @@ public class Comment extends UserDateAudit {
 	private String comment;
 	
 	@ManyToOne
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "card_id")
     @NotNull
-    private Project project;
+    private Card card;
 
-	public Comment(String comment, Project project) {
+	public Comment(String comment, Card card) {
 		this.comment = comment;
-		this.project = project;
+		this.card = card;
 	}
 
 	public long getId() {
@@ -58,12 +55,8 @@ public class Comment extends UserDateAudit {
 		this.comment = comment;
 	}
 
-	public Project getProject() {
-		return project;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
+	public void setCard(Card card) {
+		this.card = card;
 	}
 	
 }

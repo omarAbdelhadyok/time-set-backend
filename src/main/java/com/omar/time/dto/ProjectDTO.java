@@ -1,10 +1,6 @@
 package com.omar.time.dto;
 
-import java.util.List;
-
-import com.omar.time.model.Comment;
 import com.omar.time.model.StatusName;
-import com.omar.time.model.Task;
 
 public class ProjectDTO extends UserDateDTO {
 
@@ -15,11 +11,6 @@ public class ProjectDTO extends UserDateDTO {
 	private String description;
 	
 	private StatusName status;
-	
-	private List<Task> tasks;
-	
-	private List<Comment> comments;
-	
 	
 
 	public long getId() {
@@ -54,19 +45,4 @@ public class ProjectDTO extends UserDateDTO {
 		this.status = status;
 	}
 
-	public List<Task> getTasks() {
-		return tasks;
-	}
-
-	public void setTasks(List<Task> tasks) {
-		this.tasks = tasks;
-	}
-
-	public List<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
-	}
 }

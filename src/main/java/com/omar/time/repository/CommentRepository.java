@@ -12,7 +12,7 @@ import com.omar.time.model.Comment;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
-	Page<Comment> findByProjectId(long projectId, Pageable pageable);
-    Optional<Comment> findByIdAndProjectId(long id, long projectId);
+	Page<Comment> findByCardId(long cardId, Pageable pageable);
+    Optional<Comment> findByIdAndCardId(long id, long cardId);
 	
 }
