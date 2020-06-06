@@ -33,6 +33,8 @@ public class Comment extends UserDateAudit {
     @JoinColumn(name = "card_id")
     @NotNull
     private Card card;
+	
+	public Comment() {}
 
 	public Comment(String comment, Card card) {
 		this.comment = comment;
@@ -57,6 +59,12 @@ public class Comment extends UserDateAudit {
 
 	public void setCard(Card card) {
 		this.card = card;
+	}
+	
+	public void dismissCard() {
+		this.card.dismissStack();
+		this.card.dismissComment(this);
+		this.card = null;
 	}
 	
 }

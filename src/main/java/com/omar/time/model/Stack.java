@@ -77,6 +77,15 @@ public class Stack extends UserDateAudit {
 	public void setCards(List<Card> cards) {
 		this.cards = cards;
 	}
+	
+	public void dismissProject() {
+		this.project.dismissStack(this);
+		this.project = null;
+	}
+	
+	public void dismissCard(Card card) {
+		this.cards.remove(card);
+	}
 
 	@Override
 	public String toString() {

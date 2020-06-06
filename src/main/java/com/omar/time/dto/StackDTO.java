@@ -2,15 +2,13 @@ package com.omar.time.dto;
 
 import java.util.List;
 
-import com.omar.time.model.Card;
-
 public class StackDTO extends UserDateDTO {
 
 	private long id;
 	
 	private String title;
 	
-	private List<Card> cards;
+	private List<CardDTO> cards;
 
 	public long getId() {
 		return id;
@@ -20,11 +18,11 @@ public class StackDTO extends UserDateDTO {
 		this.id = id;
 	}
 	
-	public List<Card> getCards() {
+	public List<CardDTO> getCards() {
 		return cards;
 	}
 
-	public void setCards(List<Card> cards) {
+	public void setCards(List<CardDTO> cards) {
 		this.cards = cards;
 	}
 

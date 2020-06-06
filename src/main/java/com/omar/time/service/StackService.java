@@ -3,17 +3,16 @@ package com.omar.time.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.omar.time.dto.StackCreationDTO;
 import com.omar.time.dto.StackDTO;
+import com.omar.time.dto.StackUpdatingDTO;
 import com.omar.time.model.Project;
 import com.omar.time.model.Stack;
 import com.omar.time.repository.ProjectRepository;
 import com.omar.time.repository.StackRepository;
+import com.omar.time.security.UserPrincipal;
 import com.omar.time.util.ObjectMapperUtils;
 
 @Service
@@ -26,32 +25,14 @@ public class StackService {
 	private ProjectRepository projectRepository;
 	
 	
-	public Page<StackDTO> getAll(long projectId, Pageable pageable) {
-		Page<Stack> page = stackRepository.findByProjectId(projectId, pageable);
-		return new PageImpl<StackDTO>(ObjectMapperUtils.mapAll(page.getContent(), StackDTO.class), pageable, page.getTotalElements());
-	}
-	
-	public StackDTO get(long projectId, long id) {
-		Optional<Stack> result = stackRepository.findByIdAndProjectId(id, projectId);
-		
-		Stack stack = null;
-		
-		if(result.isPresent()) {
-			stack = result.get();
-		} else {
-			throw new RuntimeException("Stack with id of " + id + " was not found");
-		}
-
-		return ObjectMapperUtils.map(stack, StackDTO.class);
-	}
-	
-	public Stack create(StackCreationDTO stackCreateUpdateDTO, long projectId) {
+	public StackDTO create(UserPrincipal userPrincipal, StackCreationDTO stackCreateUpdateDTO, long projectId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
 		
 		if(result.isPresent()) {
 			project = result.get();
+			UtilService.handleUnathorized(project, userPrincipal);
 		} else {
 			throw new RuntimeException("Project with id of " + projectId + " was not found");
 		}
@@ -60,30 +41,43 @@ public class StackService {
 		
 		stack.setProject(project);
         
-		return stackRepository.save(stack);
+		stack = stackRepository.save(stack);
+		return ObjectMapperUtils.map(stack, StackDTO.class);
     }
 	
-	public Stack update(StackCreationDTO stackUpdatingDTO, long id) {
-		Optional<Stack> result = stackRepository.findById(id);
+	public StackDTO update(UserPrincipal userPrincipal, StackUpdatingDTO stackUpdatingDTO, long projectId, long stackId) {
+		Optional<Project> result = projectRepository.findById(projectId);
 		
+		Project project = null;
 		Stack stack = null;
 		if(result.isPresent()) {
+			project = result.get();
+			UtilService.handleUnathorized(project, userPrincipal);
+			UtilService.getStackFromProject(project, stackId);
 			stack = ObjectMapperUtils.map(stackUpdatingDTO, Stack.class);
-			stack.setId(id);	
+			stack.setId(stackId);
+			stack.setProject(project);
 		} else {
-			throw new RuntimeException("Stack with id of " + id + " was not found");
+			throw new RuntimeException("Project with id of " + projectId + " was not found");
 		}
 		
-        return stackRepository.save(stack);
+		stack = stackRepository.save(stack);
+		return ObjectMapperUtils.map(stack, StackDTO.class);
     }
+	
+	public boolean delete(UserPrincipal userPrincipal, long projectId, long stackId) {
+		Optional<Project> result = projectRepository.findById(projectId);
 		
-	public boolean delete(long id) {
-        Optional<Stack> result = stackRepository.findById(id);
-		
+		Project project = null;
+		Stack stack = null;
 		if(result.isPresent()) {
-            stackRepository.deleteById(id);
+			project = result.get();
+			UtilService.handleUnathorized(project, userPrincipal);
+			stack = UtilService.getStackFromProject(project, stackId);
+			stack.dismissProject();
+			stackRepository.deleteById(stackId);
 		} else {
-			throw new RuntimeException("Stack with id of " + id + " was not found");
+			throw new RuntimeException("Project with id of " + projectId + " was not found");
         }
 		
 		return true;

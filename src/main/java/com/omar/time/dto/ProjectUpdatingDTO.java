@@ -1,32 +1,22 @@
 package com.omar.time.dto;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
 import com.omar.time.model.StatusName;
 
-public class ProjectDTO extends UserDateDTO {
+public class ProjectUpdatingDTO {
 
-	private long id;
-	
+	@NotNull
 	private String title;
 	
+	@NotNull
 	private String description;
 	
+	@NotNull
 	private StatusName status;
-	
-	private List<StackDTO> stacks;
 	
 	private String img;
 	
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
 	public String getTitle() {
 		return title;
 	}
@@ -49,14 +39,6 @@ public class ProjectDTO extends UserDateDTO {
 
 	public void setStatus(StatusName status) {
 		this.status = status;
-	}
-
-	public List<StackDTO> getStacks() {
-		return stacks;
-	}
-
-	public void setStacks(List<StackDTO> stacks) {
-		this.stacks = stacks;
 	}
 
 	public String getImg() {

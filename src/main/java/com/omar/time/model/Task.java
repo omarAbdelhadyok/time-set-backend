@@ -99,6 +99,12 @@ public class Task extends UserDateAudit {
 	public void setCard(Card card) {
 		this.card = card;
 	}
+	
+	public void dismissCard() {
+		this.card.dismissStack();
+		this.card.dismissTask(this);
+		this.card = null;
+	}
 
 	@Override
 	public String toString() {

@@ -88,6 +88,20 @@ public class Card extends UserDateAudit {
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
+	
+	public void dismissStack() {
+		this.stack.dismissCard(this);
+		this.stack.dismissProject();
+		this.stack = null;
+	}
+	
+	public void dismissTask(Task task) {
+		this.tasks.remove(task);
+	}
+	
+	public void dismissComment(Comment comment) {
+		this.comments.remove(comment);
+	}
 
 	@Override
 	public String toString() {

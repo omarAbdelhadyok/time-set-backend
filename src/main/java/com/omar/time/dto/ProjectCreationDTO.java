@@ -10,6 +10,8 @@ public class ProjectCreationDTO {
 	@NotNull
 	private String description;
 	
+	private String img;
+	
 	public String getTitle() {
 		return title;
 	}
@@ -24,5 +26,13 @@ public class ProjectCreationDTO {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getImg() {
+		return img;
+	}
+
+	public void setImg(String img) {
+		this.img = img;
 	}
 }

@@ -12,6 +12,8 @@ public class AllProjectsDTO extends UserDateDTO {
 	
 	private StatusName status;
 	
+	private String img;
+	
 
 	public long getId() {
 		return id;
@@ -43,6 +45,14 @@ public class AllProjectsDTO extends UserDateDTO {
 
 	public void setStatus(StatusName status) {
 		this.status = status;
+	}
+
+	public String getImg() {
+		return img;
+	}
+
+	public void setImg(String img) {
+		this.img = img;
 	}
 
 }

@@ -3,17 +3,16 @@ package com.omar.time.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.omar.time.dto.CardByIdDTO;
 import com.omar.time.dto.CardCreationDTO;
-import com.omar.time.dto.CardDTO;
 import com.omar.time.model.Card;
+import com.omar.time.model.Project;
 import com.omar.time.model.Stack;
 import com.omar.time.repository.CardRepository;
-import com.omar.time.repository.StackRepository;
+import com.omar.time.repository.ProjectRepository;
+import com.omar.time.security.UserPrincipal;
 import com.omar.time.util.ObjectMapperUtils;
 
 @Service
@@ -23,68 +22,83 @@ public class CardService {
 	private CardRepository cardRepository;
 	
 	@Autowired
-	private StackRepository stackRepository;
+	private ProjectRepository projectRepository;
 	
 	
-	public Page<CardDTO> getAll(long projectId, Pageable pageable) {
-		Page<Card> page = cardRepository.findByStackId(projectId, pageable);
-		return new PageImpl<CardDTO>(ObjectMapperUtils.mapAll(page.getContent(), CardDTO.class), pageable, page.getTotalElements());
-	}
-
-	
-	public CardDTO get(long stackId, long id) {
-		Optional<Card> result = cardRepository.findByIdAndStackId(id, stackId);
+	public CardByIdDTO get(UserPrincipal userPrincipal, long projectId, long stackId, long cardId) {
+		Optional<Project> result = projectRepository.findById(projectId);
 		
+		Project project = null;
+		Stack stack = null;
 		Card card = null;
 		
 		if(result.isPresent()) {
-			card = result.get();
+			project = result.get();
+			UtilService.handleUnathorized(project, userPrincipal);
+			stack = UtilService.getStackFromProject(project, stackId);
+			card = UtilService.getCardFromStack(stack, cardId);
 		} else {
-			throw new RuntimeException("Stack with id of " + id + " was not found");
+			throw new RuntimeException("Project with id of " + projectId + " was not found");
 		}
 
-		return ObjectMapperUtils.map(card, CardDTO.class);
+		return ObjectMapperUtils.map(card, CardByIdDTO.class);
 	}
 	
-	public Card create(CardCreationDTO cardCreateUpdateDTO, long stackId) {
-		Optional<Stack> result = stackRepository.findById(stackId);
+	public Card create(UserPrincipal userPrincipal, CardCreationDTO cardCreateUpdateDTO, long projectId, long stackId) {
+		Optional<Project> result = projectRepository.findById(projectId);
 		
+		Project project = null;
 		Stack stack = null;
-		
 		if(result.isPresent()) {
-			stack = result.get();
+			project = result.get();
+			UtilService.handleUnathorized(project, userPrincipal);
+			stack = UtilService.getStackFromProject(project, stackId);
 		} else {
-			throw new RuntimeException("Stack with id of " + stackId + " was not found");
+			throw new RuntimeException("Project with id of " + projectId + " was not found");
 		}
-		
 		Card card = ObjectMapperUtils.map(cardCreateUpdateDTO, Card.class);
-		
 		card.setStack(stack);
         
 		return cardRepository.save(card);
     }
 	
-	public Card update(CardCreationDTO cardUpdatingDTO, long id) {
-		Optional<Card> result = cardRepository.findById(id);
+	public Card update(UserPrincipal userPrincipal, CardCreationDTO cardUpdatingDTO, long projectId, long stackId, long cardId) {
+		Optional<Project> result = projectRepository.findById(projectId);
 		
+		Project project = null;
+		Stack stack = null;
 		Card card = null;
 		if(result.isPresent()) {
+			project = result.get();
+			UtilService.handleUnathorized(project, userPrincipal);
+			stack = UtilService.getStackFromProject(project, stackId);
+			UtilService.getCardFromStack(stack, cardId);
 			card = ObjectMapperUtils.map(cardUpdatingDTO, Card.class);
-			card.setId(id);	
+			card.setId(cardId);
+			card.setStack(stack);
 		} else {
-			throw new RuntimeException("Card with id of " + id + " was not found");
+			throw new RuntimeException("Project with id of " + projectId + " was not found");
 		}
 		
-        return cardRepository.save(card);
+		return cardRepository.save(card);
     }
 		
-	public boolean delete(long id) {
-        Optional<Card> result = cardRepository.findById(id);
+	public boolean delete(UserPrincipal userPrincipal, long projectId, long stackId, long cardId) {
+		Optional<Project> result = projectRepository.findById(projectId);
+		
+		Project project = null;
+		Stack stack = null;
+		Card card = null;
 		
 		if(result.isPresent()) {
-            cardRepository.deleteById(id);
+			project = result.get();
+			UtilService.handleUnathorized(project, userPrincipal);
+			stack = UtilService.getStackFromProject(project, stackId);
+			card = UtilService.getCardFromStack(stack, cardId);
+			card.dismissStack();
+			cardRepository.deleteById(cardId);
 		} else {
-			throw new RuntimeException("Card with id of " + id + " was not found");
+			throw new RuntimeException("Project with id of " + projectId + " was not found");
         }
 		
 		return true;

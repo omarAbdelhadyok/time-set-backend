@@ -1,10 +1,7 @@
 package com.omar.time.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.omar.time.dto.StackCreationDTO;
 import com.omar.time.dto.StackDTO;
-import com.omar.time.model.Stack;
+import com.omar.time.dto.StackUpdatingDTO;
+import com.omar.time.security.CurrentUser;
+import com.omar.time.security.UserPrincipal;
 import com.omar.time.service.StackService;
 
 @RestController
@@ -24,29 +23,27 @@ public class StackController {
 	@Autowired
 	private StackService stackService;
 	
-	@GetMapping("/project/{projectId}")
-	public Page<StackDTO> getAll(@PathVariable long projectId, Pageable pagable) {
-		return stackService.getAll(projectId, pagable);
-	}
-	
-	@GetMapping("/{projectId}/{id}")
-	public StackDTO get(@PathVariable long projectId, @PathVariable long id) {
-		return stackService.get(projectId, id);
-	}
 	
 	@PostMapping("/{projectId}")
-	public Stack create(@RequestBody StackCreationDTO stackCreateUpdateDTO, @PathVariable long projectId) {
-		return stackService.create(stackCreateUpdateDTO, projectId);
+	public StackDTO create(@CurrentUser UserPrincipal userPrincipal,
+			@RequestBody StackCreationDTO stackCreateUpdateDTO,
+			@PathVariable long projectId) {
+		return stackService.create(userPrincipal, stackCreateUpdateDTO, projectId);
 	}
 	
-	@PutMapping("/{id}")
-	public Stack update(@RequestBody StackCreationDTO stackCreateUpdateDTO, @PathVariable long id) {
-		return stackService.update(stackCreateUpdateDTO, id);
+	@PutMapping("/{projectId}/{stackId}")
+	public StackDTO update(@CurrentUser UserPrincipal userPrincipal,
+			@RequestBody StackUpdatingDTO stackUpdatingDTO,
+			@PathVariable long projectId,
+			@PathVariable long stackId) {
+		return stackService.update(userPrincipal, stackUpdatingDTO, projectId, stackId);
 	}
 	
-	@DeleteMapping("/{id}")
-	public boolean delete(@PathVariable long id) {
-		return stackService.delete(id);
+	@DeleteMapping("/{projectId}/{stackId}")
+	public boolean delete(@CurrentUser UserPrincipal userPrincipal,
+			@PathVariable long projectId,
+			@PathVariable long stackId) {
+		return stackService.delete(userPrincipal ,projectId, stackId);
 	}
 	
 }
