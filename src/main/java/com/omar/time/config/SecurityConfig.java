@@ -147,11 +147,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     "/**/*.css",
                     "/**/*.js")
                     .permitAll()
-                .antMatchers("/api/auth/**")
+                .antMatchers("/api/auth/**", "/api/users/role")
                     .permitAll()
                 .antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")
                     .permitAll()
-                .antMatchers(HttpMethod.GET, "/api/polls/**", "/api/users/**", "/api/users/role")
+                .antMatchers(HttpMethod.GET, "/api/polls/**", "/api/users/**")
                     .permitAll()
                 .anyRequest()
                     .authenticated();
