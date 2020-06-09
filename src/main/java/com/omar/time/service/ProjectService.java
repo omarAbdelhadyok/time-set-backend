@@ -95,7 +95,6 @@ public class ProjectService {
 		project.setStatus(StatusName.ACTIVE);
 		project = projectRepository.save(project);
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
-        
     }
 	
 	public ProjectDTO update(UserPrincipal userPrincipal, ProjectUpdatingDTO projectUpdatingDTO, long projectId) {

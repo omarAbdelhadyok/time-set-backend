@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.omar.time.dto.StackCreationDTO;
 import com.omar.time.dto.StackDTO;
-import com.omar.time.dto.StackUpdatingDTO;
 import com.omar.time.security.CurrentUser;
 import com.omar.time.security.UserPrincipal;
 import com.omar.time.service.StackService;
@@ -26,17 +25,17 @@ public class StackController {
 	
 	@PostMapping("/{projectId}")
 	public StackDTO create(@CurrentUser UserPrincipal userPrincipal,
-			@RequestBody StackCreationDTO stackCreateUpdateDTO,
+			@RequestBody StackCreationDTO stackCreationDTO,
 			@PathVariable long projectId) {
-		return stackService.create(userPrincipal, stackCreateUpdateDTO, projectId);
+		return stackService.create(userPrincipal, stackCreationDTO, projectId);
 	}
 	
 	@PutMapping("/{projectId}/{stackId}")
 	public StackDTO update(@CurrentUser UserPrincipal userPrincipal,
-			@RequestBody StackUpdatingDTO stackUpdatingDTO,
+			@RequestBody StackCreationDTO stackCreationDTO,
 			@PathVariable long projectId,
 			@PathVariable long stackId) {
-		return stackService.update(userPrincipal, stackUpdatingDTO, projectId, stackId);
+		return stackService.update(userPrincipal, stackCreationDTO, projectId, stackId);
 	}
 	
 	@DeleteMapping("/{projectId}/{stackId}")

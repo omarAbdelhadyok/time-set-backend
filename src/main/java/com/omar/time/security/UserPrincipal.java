@@ -22,9 +22,13 @@ public class UserPrincipal implements UserDetails {
 
 	private Long id;
 
-    private String name;
+    private String firstName;
+    
+    private String lastName;
 
     private String username;
+    
+    private String mobile;
 
     @JsonIgnore
     private String email;
@@ -34,10 +38,12 @@ public class UserPrincipal implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Long id, String name, String username, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Long id, String firstName, String lastName, String username, String mobile, String email, String password, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
+        this.mobile = mobile;
         this.email = email;
         this.password = password;
         this.authorities = authorities;
@@ -48,18 +54,27 @@ public class UserPrincipal implements UserDetails {
             new SimpleGrantedAuthority(role.getName().name())
         ).collect(Collectors.toList());
 
-        return new UserPrincipal(user.getId(), user.getName(), user.getUsername(), user.getEmail(), user.getPassword(), authorities);
+        return new UserPrincipal(user.getId(), user.getFirsName(), user.getLastName(), user.getUsername(),
+        		user.getMobile(), user.getEmail(), user.getPassword(), authorities);
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getFirstName() {
+		return firstName;
+	}
 
-    public String getEmail() {
+	public String getLastName() {
+		return lastName;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public String getEmail() {
         return email;
     }
 
@@ -113,8 +128,9 @@ public class UserPrincipal implements UserDetails {
 
 	@Override
 	public String toString() {
-		return "UserPrincipal [id=" + id + ", name=" + name + ", username=" + username + ", email=" + email
-				+ ", password=" + password + ", authorities=" + authorities + "]";
+		return "UserPrincipal [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", username="
+				+ username + ", mobile=" + mobile + ", email=" + email + ", password=" + password + ", authorities="
+				+ authorities + "]";
 	}
     
 }

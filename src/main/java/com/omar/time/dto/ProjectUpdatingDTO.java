@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import com.omar.time.model.StatusName;
 
-public class ProjectUpdatingDTO {
+public class ProjectUpdatingDTO extends UserDateDTO {
 
 	@NotNull
 	private String title;
@@ -14,7 +14,7 @@ public class ProjectUpdatingDTO {
 	
 	@NotNull
 	private StatusName status;
-	
+
 	private String img;
 	
 	public String getTitle() {
@@ -48,5 +48,5 @@ public class ProjectUpdatingDTO {
 	public void setImg(String img) {
 		this.img = img;
 	}
-
+	
 }

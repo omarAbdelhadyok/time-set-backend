@@ -45,11 +45,19 @@ public class User extends DateAudit {
 
     @NotBlank
     @Size(max = 40)
-    private String name;
+    private String firsName;
+    
+    @NotBlank
+    @Size(max = 40)
+    private String lastName;
 
     @NotBlank
     @Size(max = 15)
     private String username;
+    
+    @NotBlank
+    @Size(max = 20)
+    private String mobile;
 
     //natural id is for lookups to gain performance, natural id is field that you will often use to lookup table
     @NaturalId
@@ -71,9 +79,11 @@ public class User extends DateAudit {
 
     public User() {}
 
-	public User(String name,String username, String email, String password) {
-		this.name = name;
+	public User(String firstName, String lastName, String username, String mobile, String email, String password) {
+		this.firsName = firstName;
+		this.lastName = lastName;
 		this.username = username;
+		this.mobile = mobile;
 		this.email = email;
 		this.password = password;
 	}
@@ -86,12 +96,20 @@ public class User extends DateAudit {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getFirsName() {
+		return firsName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFirsName(String firsName) {
+		this.firsName = firsName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getUsername() {
@@ -100,6 +118,14 @@ public class User extends DateAudit {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 	public String getEmail() {
@@ -128,8 +154,8 @@ public class User extends DateAudit {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", username=" + username + ", email=" + email + ", password="
-				+ password + ", roles=" + roles + "]";
+		return "User [id=" + id + ", firsName=" + firsName + ", lastName=" + lastName + ", username=" + username
+				+ ", mobile=" + mobile + ", email=" + email + ", password=" + password + ", roles=" + roles + "]";
 	}
 
 	@Override

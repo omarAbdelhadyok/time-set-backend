@@ -9,7 +9,6 @@ public class StackCreationDTO extends UserDateDTO {
 	@NotNull
 	private String title;
 	
-	@NotNull
 	private Project project;
 	
 
