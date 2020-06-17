@@ -34,6 +34,9 @@ public class Card extends UserDateAudit {
 	@Size(max = 50)
 	private String title;
 	
+	@Size(max = 150)
+	private String description;
+	
 	@ManyToOne
     @JoinColumn(name = "stack_id")
     @NotNull
@@ -67,6 +70,14 @@ public class Card extends UserDateAudit {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public void setStack(Stack stack) {

@@ -3,7 +3,9 @@ package com.omar.time.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.omar.time.dto.StackCreationDTO;
 import com.omar.time.dto.StackDTO;
@@ -33,7 +35,7 @@ public class StackService {
 			project = result.get();
 			UtilService.handleUnathorized(project, userPrincipal);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
 		Stack stack = ObjectMapperUtils.map(stackCreateUpdateDTO, Stack.class);
@@ -57,7 +59,7 @@ public class StackService {
 			stack.setId(stackId);
 			stack.setProject(project);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
 		stack = stackRepository.save(stack);
@@ -76,7 +78,7 @@ public class StackService {
 			stack.dismissProject();
 			stackRepository.deleteById(stackId);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
         }
 		
 		return true;

@@ -3,7 +3,9 @@ package com.omar.time.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.omar.time.dto.CommentCreationDTO;
 import com.omar.time.dto.CommentUpdatingDTO;
@@ -39,7 +41,7 @@ public class CommentService {
 			stack = UtilService.getStackFromProject(project, stackId);
 			card = UtilService.getCardFromStack(stack, cardId);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
 		Comment comment = ObjectMapperUtils.map(commentCreationDTO, Comment.class);
@@ -69,7 +71,7 @@ public class CommentService {
 			comment.setId(commentId);	
 			comment.setCard(card);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
         return commentRepository.save(comment);
@@ -93,7 +95,7 @@ public class CommentService {
 			comment.dismissCard();
 			commentRepository.deleteById(commentId);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
         }
 		
 		return true;

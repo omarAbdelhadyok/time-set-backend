@@ -1,5 +1,8 @@
 package com.omar.time.service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.omar.time.model.Card;
 import com.omar.time.model.Comment;
 import com.omar.time.model.Project;
@@ -17,7 +20,7 @@ public class UtilService {
 			 }
 		}
 		if((project.getCreatedBy() != userPrincipal.getId()) && !isAuthor) {
-			throw new RuntimeException("You are not either owner or auditor for this project");
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not either owner or auditor for this project");
 		}
     }
 	
@@ -31,7 +34,7 @@ public class UtilService {
 			}
 		}
 		if(stack == null) {
-			throw new RuntimeException("Stack with id of " + stackId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Stack not found");
 		}
 		return stack;
 	}
@@ -46,7 +49,7 @@ public class UtilService {
 			}
 		}
 		if(card == null) {
-			throw new RuntimeException("Card with id of " + cardId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found");
 		}
 		return card;
 	}
@@ -61,7 +64,7 @@ public class UtilService {
 			}
 		}
 		if(task == null) {
-			throw new RuntimeException("Task with id of " + taskId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
 		}
 		return task;
 	}
@@ -76,7 +79,7 @@ public class UtilService {
 			}
 		}
 		if(comment == null) {
-			throw new RuntimeException("Task with id of " + commentId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
 		}
 		return comment;
 	}

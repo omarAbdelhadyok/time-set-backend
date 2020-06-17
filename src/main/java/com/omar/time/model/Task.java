@@ -1,5 +1,7 @@
 package com.omar.time.model;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,11 +34,7 @@ public class Task extends UserDateAudit {
 	@Size(max = 150)
 	private String task;
 	
-	@NotNull
-	private int duration;
-	
-	@NotNull
-	private UnitName unit;
+	private LocalDateTime dueDate;
 	
 	@NotNull
 	private StatusName status;
@@ -47,11 +45,12 @@ public class Task extends UserDateAudit {
     private Card card;
 	
 	public Task() {}
-
-	public Task(String task, int duration, UnitName unit, StatusName status, Card card) {
+	
+	public Task(long id, String task, LocalDateTime dueDate, StatusName status, Card card) {
+		super();
+		this.id = id;
 		this.task = task;
-		this.duration = duration;
-		this.unit = unit;
+		this.dueDate = dueDate;
 		this.status = status;
 		this.card = card;
 	}
@@ -72,20 +71,12 @@ public class Task extends UserDateAudit {
 		this.task = task;
 	}
 
-	public int getDuration() {
-		return duration;
+	public LocalDateTime getLocalDateTime() {
+		return dueDate;
 	}
 
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}
-
-	public UnitName getUnit() {
-		return unit;
-	}
-
-	public void setUnit(UnitName unit) {
-		this.unit = unit;
+	public void setLocalDateTime(LocalDateTime dueDate) {
+		this.dueDate = dueDate;
 	}
 
 	public StatusName getStatus() {
@@ -108,8 +99,8 @@ public class Task extends UserDateAudit {
 
 	@Override
 	public String toString() {
-		return "Task [id=" + id + ", task=" + task + ", duration=" + duration + ", unit=" + unit + ", status=" + status
-				+ ", card=" + card + ", careate_at=" + getCreatedAt() + ", updated_at" + getUpdatedAt() + "]";
+		return "Task [id=" + id + ", task=" + task + ", dueDate=" + dueDate + ", status=" + status
+				+ ", card=" + card + "]";
 	}
 	
 }

@@ -1,7 +1,8 @@
 package com.omar.time.dto;
 
+import java.time.LocalDateTime;
+
 import com.omar.time.model.StatusName;
-import com.omar.time.model.UnitName;
 
 public class TaskDTO extends UserDateDTO {
 
@@ -9,9 +10,7 @@ public class TaskDTO extends UserDateDTO {
 	
 	private String task;
 	
-	private int duration;
-	
-	private UnitName unit;
+	private LocalDateTime dueDate;
 	
 	private StatusName status;
 	
@@ -31,20 +30,12 @@ public class TaskDTO extends UserDateDTO {
 		this.task = task;
 	}
 
-	public int getDuration() {
-		return duration;
+	public LocalDateTime getDueDate() {
+		return dueDate;
 	}
 
-	public void setDuration(int duration) {
-		this.duration = duration;
-	}
-
-	public UnitName getUnit() {
-		return unit;
-	}
-
-	public void setUnit(UnitName unit) {
-		this.unit = unit;
+	public void setDueDate(LocalDateTime dueDate) {
+		this.dueDate = dueDate;
 	}
 
 	public StatusName getStatus() {

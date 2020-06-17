@@ -3,7 +3,9 @@ package com.omar.time.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.omar.time.dto.TaskCreationDTO;
 import com.omar.time.dto.TaskStatusUpdateDTO;
@@ -41,7 +43,7 @@ public class TaskService {
 			stack = UtilService.getStackFromProject(project, stackId);
 			card = UtilService.getCardFromStack(stack, cardId);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
 		Task task = ObjectMapperUtils.map(taskCreationDTO, Task.class);
@@ -69,12 +71,12 @@ public class TaskService {
 			
 			task = ObjectMapperUtils.map(taskUpdatingDTO, Task.class);
 			if(task.getStatus() != StatusName.ACTIVE) {
-				throw new RuntimeException("You cannot update cancelled or closed tasks");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Closed or cancelled projects cannot be updated");
 			}
 			task.setId(taskId);	
 			task.setCard(card);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
         return taskRepository.save(task);
@@ -101,7 +103,7 @@ public class TaskService {
 			task.setId(taskId);	
 			task.setCard(card);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
 		return taskRepository.save(task);
@@ -125,7 +127,7 @@ public class TaskService {
 			task.dismissCard();
             taskRepository.deleteById(taskId);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
         }
 		
 		return true;

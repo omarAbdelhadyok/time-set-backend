@@ -3,7 +3,9 @@ package com.omar.time.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.omar.time.dto.UserDTO;
 import com.omar.time.model.User;
@@ -21,7 +23,7 @@ public class UserService {
 		List<User> result = userRepository.findByUsernameOrEmailContaining(userNameOrEmail, userNameOrEmail);
 		
 		if(result.isEmpty()) {
-			throw new RuntimeException("User was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found");
 		}
 		
 		return ObjectMapperUtils.mapAll(result, UserDTO.class);

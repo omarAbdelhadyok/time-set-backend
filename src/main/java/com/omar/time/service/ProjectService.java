@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.omar.time.dto.AllProjectsDTO;
 import com.omar.time.dto.ProjectCreationDTO;
@@ -47,7 +49,7 @@ public class ProjectService {
 			project = result.get();
 			UtilService.handleUnathorized(project, userPrincipal);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
@@ -74,16 +76,16 @@ public class ProjectService {
 				
 				for(User author: project.getAuthors()) {
 					if(author.getId() == userId) {
-						throw new RuntimeException("User is already an author");
+						throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is already an author");
 					}
 				}
 				
 				project.addAuthor(user);
 			} else {
-				throw new RuntimeException("User with id of " + userId + " was not found");
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found");
 			}
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
 		project = projectRepository.save(project);
@@ -104,13 +106,13 @@ public class ProjectService {
 		if(result.isPresent()) {
 			project = result.get();
 			UtilService.handleUnathorized(project, userPrincipal);
-			project = ObjectMapperUtils.map(projectUpdatingDTO, Project.class);
+			ObjectMapperUtils.copyPropertiesForUpdate(projectUpdatingDTO, project);
 			if(project.getStatus() != StatusName.ACTIVE) {
-				throw new RuntimeException("You cannot update cancelled or closed projects");
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Closed or cancelled projects cannot be updated");
 			}
 			project.setId(projectId);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		project = projectRepository.save(project);
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
@@ -123,10 +125,10 @@ public class ProjectService {
 		if(result.isPresent()) {
 			project = result.get();
 			UtilService.handleUnathorized(project, userPrincipal);
-			project = ObjectMapperUtils.map(projectStatusUpdateDTO, Project.class);
+			ObjectMapperUtils.copyPropertiesForUpdate(projectStatusUpdateDTO, project);
 			project.setId(projectId);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
 		project = projectRepository.save(project);
@@ -142,7 +144,7 @@ public class ProjectService {
 			UtilService.handleUnathorized(project, userPrincipal);
             projectRepository.deleteById(id);
 		} else {
-			throw new RuntimeException("Project with id of " + id + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
         }
 		
 		return true;
@@ -161,12 +163,12 @@ public class ProjectService {
 			if(userResult.isPresent()) {
 				project.deleteAuthor(author);
 			} else {
-				throw new RuntimeException("User with id of " + userPrincipal.getId() + " was not found");
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found");
 			}
 			
 			projectRepository.save(project);
 		} else {
-			throw new RuntimeException("Project with id of " + projectId + " was not found");
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
         }
     	return true;
     }
@@ -184,12 +186,12 @@ public class ProjectService {
  			if(userResult.isPresent()) {
  				project.deleteAuthor(author);
  			} else {
- 				throw new RuntimeException("User with id of " + userPrincipal.getId() + " was not found");
+ 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found");
  			}
  			
  			projectRepository.save(project);
  		} else {
- 			throw new RuntimeException("Project with id of " + projectId + " was not found");
+ 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
          }
      	return true;
     }
