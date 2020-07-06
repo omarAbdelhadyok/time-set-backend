@@ -11,6 +11,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.NaturalId;
 
+import com.omar.time.model.enums.RoleName;
+
 @Entity
 @Table(name = "roles")
 public class Role {

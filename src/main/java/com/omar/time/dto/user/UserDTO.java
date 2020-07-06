@@ -1,4 +1,4 @@
-package com.omar.time.dto;
+package com.omar.time.dto.user;
 
 public class UserDTO {
 

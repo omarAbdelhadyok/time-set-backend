@@ -3,6 +3,7 @@ package com.omar.time.payload;
 import javax.validation.constraints.NotBlank;
 
 public class LoginRequest {
+	
     @NotBlank
     private String usernameOrEmail;
 

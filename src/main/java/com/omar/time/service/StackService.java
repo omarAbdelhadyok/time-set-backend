@@ -7,8 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.omar.time.dto.StackCreationDTO;
-import com.omar.time.dto.StackDTO;
+import com.omar.time.dto.stack.StackDTO;
 import com.omar.time.model.Project;
 import com.omar.time.model.Stack;
 import com.omar.time.repository.ProjectRepository;
@@ -26,7 +25,7 @@ public class StackService {
 	private ProjectRepository projectRepository;
 	
 	
-	public StackDTO create(UserPrincipal userPrincipal, StackCreationDTO stackCreateUpdateDTO, long projectId) {
+	public StackDTO create(UserPrincipal userPrincipal, StackDTO stackDTO, long projectId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
@@ -38,7 +37,7 @@ public class StackService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
-		Stack stack = ObjectMapperUtils.map(stackCreateUpdateDTO, Stack.class);
+		Stack stack = ObjectMapperUtils.map(stackDTO, Stack.class);
 		
 		stack.setProject(project);
         
@@ -46,7 +45,7 @@ public class StackService {
 		return ObjectMapperUtils.map(stack, StackDTO.class);
     }
 	
-	public StackDTO update(UserPrincipal userPrincipal, StackCreationDTO stackCreationDTO, long projectId, long stackId) {
+	public StackDTO update(UserPrincipal userPrincipal, StackDTO stackDTO, long projectId, long stackId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
@@ -55,7 +54,7 @@ public class StackService {
 			project = result.get();
 			UtilService.handleUnathorized(project, userPrincipal);
 			UtilService.getStackFromProject(project, stackId);
-			stack = ObjectMapperUtils.map(stackCreationDTO, Stack.class);
+			stack = ObjectMapperUtils.map(stackDTO, Stack.class);
 			stack.setId(stackId);
 			stack.setProject(project);
 		} else {

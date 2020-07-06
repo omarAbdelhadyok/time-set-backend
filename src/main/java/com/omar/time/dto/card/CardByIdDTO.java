@@ -1,6 +1,10 @@
-package com.omar.time.dto;
+package com.omar.time.dto.card;
 
 import java.util.List;
+
+import com.omar.time.dto.comment.CommentDTO;
+import com.omar.time.dto.task.TaskDTO;
+import com.omar.time.dto.user.UserDateDTO;
 
 public class CardByIdDTO extends UserDateDTO {
 

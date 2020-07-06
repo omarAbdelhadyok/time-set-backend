@@ -1,4 +1,4 @@
-package com.omar.time.model;
+package com.omar.time.model.enums;
 
 public enum RoleName {
     ROLE_USER,

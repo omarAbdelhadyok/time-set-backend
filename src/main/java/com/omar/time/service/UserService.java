@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.omar.time.dto.UserDTO;
+import com.omar.time.dto.user.UserDTO;
 import com.omar.time.model.User;
 import com.omar.time.repository.UserRepository;
 import com.omar.time.util.ObjectMapperUtils;

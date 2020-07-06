@@ -12,10 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.omar.time.security.UserPrincipal;
 
-//We will need to create a bean of type AuditorAware and 
-//will also need to enable JPA auditing by specifying @EnableJpaAuditing on one of our configuration classes.
-//@EnableJpaAuditing accepts one argument, auditorAwareRef, where we need to pass the name of the AuditorAware bean.
-
 @Configuration
 @EnableJpaAuditing 
 public class AuditingConfig {
@@ -25,11 +21,6 @@ public class AuditingConfig {
         return new SpringSecurityAuditAwareImpl();
     }
 }
-
-
-//to make JPA aware of currently logged in users (createdBy, updatedBy) 
-//we will need to provide an implementation of AuditorAware and override the getCurrentAuditor() method.
-//And inside getCurrentAuditor(), we will need to fetch a currently logged-in user.
 
 class SpringSecurityAuditAwareImpl implements AuditorAware<Long> {
 

@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.omar.time.dto.CardByIdDTO;
-import com.omar.time.dto.CardCreationDTO;
+import com.omar.time.dto.card.CardByIdDTO;
+import com.omar.time.dto.card.CardDTO;
 import com.omar.time.model.Card;
 import com.omar.time.model.Project;
 import com.omar.time.model.Stack;
@@ -46,7 +46,7 @@ public class CardService {
 		return ObjectMapperUtils.map(card, CardByIdDTO.class);
 	}
 	
-	public Card create(UserPrincipal userPrincipal, CardCreationDTO cardCreateUpdateDTO, long projectId, long stackId) {
+	public Card create(UserPrincipal userPrincipal, CardDTO cardDTO, long projectId, long stackId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
@@ -58,13 +58,13 @@ public class CardService {
 		} else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
-		Card card = ObjectMapperUtils.map(cardCreateUpdateDTO, Card.class);
+		Card card = ObjectMapperUtils.map(cardDTO, Card.class);
 		card.setStack(stack);
         
 		return cardRepository.save(card);
     }
 	
-	public Card update(UserPrincipal userPrincipal, CardCreationDTO cardUpdatingDTO, long projectId, long stackId, long cardId) {
+	public Card update(UserPrincipal userPrincipal, CardDTO cardDTO, long projectId, long stackId, long cardId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
@@ -75,7 +75,7 @@ public class CardService {
 			UtilService.handleUnathorized(project, userPrincipal);
 			stack = UtilService.getStackFromProject(project, stackId);
 			UtilService.getCardFromStack(stack, cardId);
-			card = ObjectMapperUtils.map(cardUpdatingDTO, Card.class);
+			card = ObjectMapperUtils.map(cardDTO, Card.class);
 			card.setId(cardId);
 			card.setStack(stack);
 		} else {

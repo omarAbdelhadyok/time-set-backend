@@ -15,6 +15,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.omar.time.model.audit.UserDateAudit;
+import com.omar.time.model.enums.StatusName;
 
 @Entity
 @Table(name = "tasks")

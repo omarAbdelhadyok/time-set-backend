@@ -7,8 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.omar.time.dto.CommentCreationDTO;
-import com.omar.time.dto.CommentUpdatingDTO;
+import com.omar.time.dto.comment.CommentDTO;
 import com.omar.time.model.Card;
 import com.omar.time.model.Comment;
 import com.omar.time.model.Project;
@@ -28,7 +27,7 @@ public class CommentService {
 	private ProjectRepository projectRepository;
 	
 	
-	public Comment create(UserPrincipal userPrincipal, CommentCreationDTO commentCreationDTO, long projectId, long stackId, long cardId) {
+	public Comment create(UserPrincipal userPrincipal, CommentDTO commentDTO, long projectId, long stackId, long cardId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
@@ -44,14 +43,14 @@ public class CommentService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
-		Comment comment = ObjectMapperUtils.map(commentCreationDTO, Comment.class);
+		Comment comment = ObjectMapperUtils.map(commentDTO, Comment.class);
 		
 		comment.setCard(card);
         
 		return commentRepository.save(comment);
     }
 	
-	public Comment update(UserPrincipal userPrincipal, CommentUpdatingDTO commentUpdatingDTO, long projectId, long stackId, long cardId, long commentId) {
+	public Comment update(UserPrincipal userPrincipal, CommentDTO commentDTO, long projectId, long stackId, long cardId, long commentId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
@@ -66,7 +65,7 @@ public class CommentService {
 			card = UtilService.getCardFromStack(stack, cardId);
 			UtilService.getCommentFromCard(card, commentId);
 			
-			comment = ObjectMapperUtils.map(commentUpdatingDTO, Comment.class);
+			comment = ObjectMapperUtils.map(commentDTO, Comment.class);
 
 			comment.setId(commentId);	
 			comment.setCard(card);

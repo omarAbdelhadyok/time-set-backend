@@ -18,6 +18,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.omar.time.model.audit.UserDateAudit;
+import com.omar.time.model.enums.StatusName;
 
 @Entity
 @Table(name = "projects")

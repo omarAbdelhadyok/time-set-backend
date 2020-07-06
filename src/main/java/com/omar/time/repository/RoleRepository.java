@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.omar.time.model.Role;
-import com.omar.time.model.RoleName;
+import com.omar.time.model.enums.RoleName;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {

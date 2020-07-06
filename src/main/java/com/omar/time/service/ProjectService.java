@@ -10,14 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.omar.time.dto.AllProjectsDTO;
-import com.omar.time.dto.ProjectCreationDTO;
-import com.omar.time.dto.ProjectDTO;
-import com.omar.time.dto.ProjectStatusUpdateDTO;
-import com.omar.time.dto.ProjectUpdatingDTO;
+import com.omar.time.dto.project.AllProjectsDTO;
+import com.omar.time.dto.project.ProjectDTO;
 import com.omar.time.model.Project;
-import com.omar.time.model.StatusName;
 import com.omar.time.model.User;
+import com.omar.time.model.enums.StatusName;
 import com.omar.time.repository.ProjectRepository;
 import com.omar.time.repository.UserRepository;
 import com.omar.time.security.UserPrincipal;
@@ -37,7 +34,8 @@ public class ProjectService {
 		User user = ObjectMapperUtils.map(userPrincipal, User.class);
 		
 		Page<Project> page = projectRepository.findByCreatedByOrAuthors(userPrincipal.getId(), user, pageable); 
-		return new PageImpl<AllProjectsDTO>(ObjectMapperUtils.mapAll(page.getContent(), AllProjectsDTO.class), pageable, page.getTotalElements());
+		return new PageImpl<AllProjectsDTO>(ObjectMapperUtils.mapAll(
+				page.getContent(), AllProjectsDTO.class), pageable, page.getTotalElements());
 	}
 	
 	public ProjectDTO get(UserPrincipal userPrincipal, long projectId) {
@@ -92,21 +90,21 @@ public class ProjectService {
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
 	}
 	
-	public ProjectDTO create(ProjectCreationDTO projectCreationDTO) {
-		Project project = ObjectMapperUtils.map(projectCreationDTO, Project.class);
+	public ProjectDTO create(ProjectDTO projectDTO) {
+		Project project = ObjectMapperUtils.map(projectDTO, Project.class);
 		project.setStatus(StatusName.ACTIVE);
 		project = projectRepository.save(project);
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
     }
 	
-	public ProjectDTO update(UserPrincipal userPrincipal, ProjectUpdatingDTO projectUpdatingDTO, long projectId) {
+	public ProjectDTO update(UserPrincipal userPrincipal, ProjectDTO projectDTO, long projectId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
 		if(result.isPresent()) {
 			project = result.get();
 			UtilService.handleUnathorized(project, userPrincipal);
-			ObjectMapperUtils.copyPropertiesForUpdate(projectUpdatingDTO, project);
+			ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
 			if(project.getStatus() != StatusName.ACTIVE) {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Closed or cancelled projects cannot be updated");
 			}
@@ -118,14 +116,14 @@ public class ProjectService {
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
     }
 	
-	public ProjectDTO updateStatus(UserPrincipal userPrincipal, ProjectStatusUpdateDTO projectStatusUpdateDTO, long projectId) {
+	public ProjectDTO updateStatus(UserPrincipal userPrincipal, ProjectDTO projectDTO, long projectId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
 		if(result.isPresent()) {
 			project = result.get();
 			UtilService.handleUnathorized(project, userPrincipal);
-			ObjectMapperUtils.copyPropertiesForUpdate(projectStatusUpdateDTO, project);
+			ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
 			project.setId(projectId);
 		} else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");

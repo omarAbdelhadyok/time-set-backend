@@ -7,14 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.omar.time.dto.TaskCreationDTO;
-import com.omar.time.dto.TaskStatusUpdateDTO;
-import com.omar.time.dto.TaskUpdatingDTO;
+import com.omar.time.dto.task.TaskDTO;
 import com.omar.time.model.Card;
 import com.omar.time.model.Project;
 import com.omar.time.model.Stack;
-import com.omar.time.model.StatusName;
 import com.omar.time.model.Task;
+import com.omar.time.model.enums.StatusName;
 import com.omar.time.repository.ProjectRepository;
 import com.omar.time.repository.TaskRepository;
 import com.omar.time.security.UserPrincipal;
@@ -30,7 +28,7 @@ public class TaskService {
 	private ProjectRepository projectRepository;
 	
 		
-	public Task create(UserPrincipal userPrincipal, TaskCreationDTO taskCreationDTO, long projectId, long stackId, long cardId) {
+	public Task create(UserPrincipal userPrincipal, TaskDTO taskDTO, long projectId, long stackId, long cardId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
@@ -46,7 +44,7 @@ public class TaskService {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
 		}
 		
-		Task task = ObjectMapperUtils.map(taskCreationDTO, Task.class);
+		Task task = ObjectMapperUtils.map(taskDTO, Task.class);
 		
 		task.setStatus(StatusName.ACTIVE);
 		task.setCard(card);
@@ -54,7 +52,7 @@ public class TaskService {
 		return taskRepository.save(task);
     }
 	
-	public Task update(UserPrincipal userPrincipal, TaskUpdatingDTO taskUpdatingDTO, long projectId, long stackId, long cardId, long taskId) {
+	public Task update(UserPrincipal userPrincipal, TaskDTO taskDTO, long projectId, long stackId, long cardId, long taskId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
@@ -69,7 +67,7 @@ public class TaskService {
 			card = UtilService.getCardFromStack(stack, cardId);
 			UtilService.getTaskFromCard(card, taskId);
 			
-			task = ObjectMapperUtils.map(taskUpdatingDTO, Task.class);
+			task = ObjectMapperUtils.map(taskDTO, Task.class);
 			if(task.getStatus() != StatusName.ACTIVE) {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Closed or cancelled projects cannot be updated");
 			}
@@ -83,7 +81,7 @@ public class TaskService {
     }
 	
 	
-	public Task updateStatus(UserPrincipal userPrincipal, TaskStatusUpdateDTO taskStatusUpdateDTO, long projectId, long stackId, long cardId, long taskId) {
+	public Task updateStatus(UserPrincipal userPrincipal, TaskDTO taskDTO, long projectId, long stackId, long cardId, long taskId) {
 		Optional<Project> result = projectRepository.findById(projectId);
 		
 		Project project = null;
@@ -98,7 +96,7 @@ public class TaskService {
 			card = UtilService.getCardFromStack(stack, cardId);
 			UtilService.getTaskFromCard(card, taskId);
 			
-			task = ObjectMapperUtils.map(taskStatusUpdateDTO, Task.class);
+			task = ObjectMapperUtils.map(taskDTO, Task.class);
 
 			task.setId(taskId);	
 			task.setCard(card);
