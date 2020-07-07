@@ -20,13 +20,16 @@ import javax.validation.constraints.Size;
 import com.omar.time.model.audit.UserDateAudit;
 import com.omar.time.model.enums.StatusName;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "projects")
-public class Project extends UserDateAudit {
+public @Data class Project extends UserDateAudit {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 6232773173017994344L;
 
 	@Id
@@ -55,68 +58,11 @@ public class Project extends UserDateAudit {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private List<User> authors = new LinkedList<>();
 	
-	public Project() {}
 
 	public Project(String title, String description, StatusName status) {
 		this.title = title;
 		this.description = description;
 		this.status = status;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public StatusName getStatus() {
-		return status;
-	}
-
-	public void setStatus(StatusName status) {
-		this.status = status;
-	}
-
-	public List<Stack> getStacks() {
-		return stacks;
-	}
-
-	public void setStacks(List<Stack> stacks) {
-		this.stacks = stacks;
-	}
-
-	public List<User> getAuthors() {
-		return authors;
-	}
-
-	public void setAuthors(List<User> authors) {
-		this.authors = authors;
-	}
-	
-	public String getImg() {
-		return img;
-	}
-
-	public void setImg(String img) {
-		this.img = img;
 	}
 
 	public void addAuthor(User author) {
@@ -140,11 +86,5 @@ public class Project extends UserDateAudit {
 	public void dismissStack(Stack stack) {
         this.stacks.remove(stack);
     }
-	
-	@Override
-	public String toString() {
-		return "Project [id=" + id + ", title=" + title + ", description=" + description + ", status=" + status
-				+ ", stacks=" + stacks + "]";
-	}
 	
 }

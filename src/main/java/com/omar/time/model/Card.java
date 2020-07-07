@@ -17,13 +17,16 @@ import javax.validation.constraints.Size;
 
 import com.omar.time.model.audit.UserDateAudit;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "cards")
-public class Card extends UserDateAudit {
+public @Data class Card extends UserDateAudit {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4666330781050608563L;
 
 	@Id
@@ -47,8 +50,6 @@ public class Card extends UserDateAudit {
 	
 	@OneToMany(mappedBy = "card", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Task> tasks;
-	
-	public Card() {}
 
 	public Card(long id, String title, Stack stack) {
 		this.id = id;
@@ -56,50 +57,6 @@ public class Card extends UserDateAudit {
 		this.stack = stack;
 	}
 
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setStack(Stack stack) {
-		this.stack = stack;
-	}
-
-	public List<Task> getTasks() {
-		return tasks;
-	}
-
-	public void setTasks(List<Task> tasks) {
-		this.tasks = tasks;
-	}
-
-	public List<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
-	}
-	
 	public void dismissStack() {
 		this.stack.dismissCard(this);
 		this.stack.dismissProject();
@@ -113,11 +70,5 @@ public class Card extends UserDateAudit {
 	public void dismissComment(Comment comment) {
 		this.comments.remove(comment);
 	}
-
-	@Override
-	public String toString() {
-		return "Card [id=" + id + ", title=" + title + ", stack=" + stack + ", tasks=" + tasks + "]";
-	}
-	
 	
 }

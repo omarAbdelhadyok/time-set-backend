@@ -17,13 +17,16 @@ import javax.validation.constraints.Size;
 
 import com.omar.time.model.audit.UserDateAudit;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "stacks")
-public class Stack extends UserDateAudit {
+public @Data class Stack extends UserDateAudit {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2496911141918545637L;
 
 	@Id
@@ -41,41 +44,11 @@ public class Stack extends UserDateAudit {
 	
 	@OneToMany(mappedBy = "stack", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Card> cards;
-	
-	public Stack() {}
 
 	public Stack(long id, String title, Project project) {
 		this.id = id;
 		this.title = title;
 		this.project = project;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void setProject(Project project) {
-		this.project = project;
-	}
-
-	public List<Card> getCards() {
-		return cards;
-	}
-
-	public void setCards(List<Card> cards) {
-		this.cards = cards;
 	}
 	
 	public void dismissProject() {
@@ -85,11 +58,6 @@ public class Stack extends UserDateAudit {
 	
 	public void dismissCard(Card card) {
 		this.cards.remove(card);
-	}
-
-	@Override
-	public String toString() {
-		return "Stack [id=" + id + ", title=" + title + ", project=" + project + ", cards=" + cards + "]";
 	}
 	
 }

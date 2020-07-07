@@ -45,7 +45,7 @@ public class User extends DateAudit {
 
     @NotBlank
     @Size(max = 40)
-    private String firsName;
+    private String firstName;
     
     @NotBlank
     @Size(max = 40)
@@ -80,7 +80,7 @@ public class User extends DateAudit {
     public User() {}
 
 	public User(String firstName, String lastName, String username, String mobile, String email, String password) {
-		this.firsName = firstName;
+		this.firstName = firstName;
 		this.lastName = lastName;
 		this.username = username;
 		this.mobile = mobile;
@@ -96,12 +96,12 @@ public class User extends DateAudit {
 		this.id = id;
 	}
 
-	public String getFirsName() {
-		return firsName;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setFirsName(String firsName) {
-		this.firsName = firsName;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
 	public String getLastName() {
@@ -154,7 +154,7 @@ public class User extends DateAudit {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", firsName=" + firsName + ", lastName=" + lastName + ", username=" + username
+		return "User [id=" + id + ", firsName=" + firstName + ", lastName=" + lastName + ", username=" + username
 				+ ", mobile=" + mobile + ", email=" + email + ", password=" + password + ", roles=" + roles + "]";
 	}
 

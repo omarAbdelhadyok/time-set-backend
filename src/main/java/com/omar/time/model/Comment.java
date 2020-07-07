@@ -12,13 +12,16 @@ import javax.validation.constraints.Size;
 
 import com.omar.time.model.audit.UserDateAudit;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "comments")
-public class Comment extends UserDateAudit {
+public @Data class Comment extends UserDateAudit {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4862412025483650698L;
 
 	@Id
@@ -33,31 +36,9 @@ public class Comment extends UserDateAudit {
     @JoinColumn(name = "card_id")
     @NotNull
     private Card card;
-	
-	public Comment() {}
 
 	public Comment(String comment, Card card) {
 		this.comment = comment;
-		this.card = card;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	public void setCard(Card card) {
 		this.card = card;
 	}
 	

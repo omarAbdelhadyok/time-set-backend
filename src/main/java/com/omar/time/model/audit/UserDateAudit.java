@@ -8,6 +8,11 @@ import org.springframework.data.annotation.LastModifiedBy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 @MappedSuperclass
 @JsonIgnoreProperties(
     value = {"createdBy", "updatedBy"},
@@ -15,10 +20,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 )
 public abstract class UserDateAudit extends DateAudit {
     
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8302738905364683701L;
 
 	@CreatedBy
@@ -28,19 +29,4 @@ public abstract class UserDateAudit extends DateAudit {
     @LastModifiedBy
     private Long updatedBy;
 
-    public Long getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Long createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Long getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(Long updatedBy) {
-        this.updatedBy = updatedBy;
-    }
 }
