@@ -1,6 +1,7 @@
 package com.omar.time.dto.comment;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import com.omar.time.dto.Create;
 import com.omar.time.dto.Update;
@@ -15,7 +16,8 @@ public class CommentDTO extends UserDateDTO {
 
 	private long id;
 	
-	@NotBlank(groups = {Create.class, Update.class})
+	@NotBlank(groups = {Create.class, Update.class}, message = "{errors.validation.comment.notBlank}")
+	@Size(max = 250, groups = {Create.class, Update.class}, message = "{errors.validation.comment.maxLength}")
 	private String comment;
 	
 }

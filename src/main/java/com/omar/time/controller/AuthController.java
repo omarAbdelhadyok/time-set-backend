@@ -4,13 +4,15 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.omar.time.payload.LoginRequest;
-import com.omar.time.payload.SignUpRequest;
+import com.omar.time.dto.auth.LoginRequestDTO;
+import com.omar.time.dto.auth.SignupRequestDTO;
 import com.omar.time.service.AuthService;
 
 @RestController
@@ -26,13 +28,18 @@ public class AuthController {
 	}
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-    	return this.authService.login(loginRequest);
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    	return this.authService.login(loginRequestDTO);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-    	return this.authService.signUp(signUpRequest);
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDTO signupRequestDTO) {
+    	return this.authService.signUp(signupRequestDTO);
     }
-
+    
+    @GetMapping("/confirm-account")
+    public boolean confirmUserAccount(@RequestParam("token") String confirmationToken) {
+    	return this.authService.confirmUserAccount(confirmationToken);
+    }
+    
 }

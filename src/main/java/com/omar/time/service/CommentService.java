@@ -2,10 +2,10 @@ package com.omar.time.service;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.omar.time.dto.comment.CommentDTO;
 import com.omar.time.model.Card;
@@ -40,7 +40,7 @@ public class CommentService {
 			stack = UtilService.getStackFromProject(project, stackId);
 			card = UtilService.getCardFromStack(stack, cardId);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("errors.app.project.notFound");
 		}
 		
 		Comment comment = ObjectMapperUtils.map(commentDTO, Comment.class);
@@ -70,7 +70,7 @@ public class CommentService {
 			comment.setId(commentId);	
 			comment.setCard(card);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("errors.app.project.notFound");
 		}
 		
         return commentRepository.save(comment);
@@ -94,7 +94,7 @@ public class CommentService {
 			comment.dismissCard();
 			commentRepository.deleteById(commentId);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("errors.app.project.notFound");
         }
 		
 		return true;

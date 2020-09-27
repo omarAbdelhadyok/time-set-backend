@@ -28,8 +28,8 @@ public class UserController {
 	private UserService userService;
 	
 	@GetMapping
-	public UserPrincipal get(@CurrentUser UserPrincipal userPrincipal) {
-		return userPrincipal;
+	public UserDTO get(@CurrentUser UserPrincipal userPrincipal) {
+		return userService.get(userPrincipal);
 	}
 	
 	@GetMapping("/{userNameOrEmail}")
@@ -39,8 +39,11 @@ public class UserController {
 	
 	@PostMapping("/role")
 	public Role createRole(@RequestBody Role role) {
-		return this.roleRepository.save(role);
+		return roleRepository.save(role);
 	}
 
-	
+	@GetMapping("/resend-confirmation")
+    public boolean resendConfirmation(@CurrentUser UserPrincipal userPrincipal) {
+    	return userService.resendConfirmation(userPrincipal);
+    }
 }

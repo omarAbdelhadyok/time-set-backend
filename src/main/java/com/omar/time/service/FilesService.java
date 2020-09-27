@@ -14,7 +14,7 @@ public class FilesService {
     
     public String saveFile(MultipartFile file) {
         if (file.isEmpty()) {
-            throw new RuntimeException("File is not found");
+            throw new RuntimeException("errors.app.file.notFound");
         }
         Path fileNameAndPath = null;
         String fileName = null;
@@ -23,12 +23,12 @@ public class FilesService {
         	fileName = date + file.getOriginalFilename();
         	fileNameAndPath = Paths.get(uploadDirectory, fileName);
 		} catch (Exception e) {
-			throw new RuntimeException("Something went wrong");
+			throw new RuntimeException("errors.app.server");
 		}
         try {
             Files.write(fileNameAndPath, file.getBytes());
         } catch (Exception e) {
-        	throw new RuntimeException("Something went wrong");
+        	throw new RuntimeException("errors.app.server");
         }
         return fileName;
     }

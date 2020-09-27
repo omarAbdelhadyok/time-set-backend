@@ -2,15 +2,16 @@ package com.omar.time.service;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.omar.time.dto.todo.TodoDto;
+import com.omar.time.exception.BadRequestException;
 import com.omar.time.model.Todo;
 import com.omar.time.model.enums.TodoStatusName;
 import com.omar.time.repository.TodoRepository;
@@ -42,7 +43,7 @@ public class TodoService {
 		if(result.isPresent()) {
 			todo = result.get();
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo Not Found");
+			throw new EntityNotFoundException("errors.app.todo.notFound");
 		}
 
 		return ObjectMapperUtils.map(todo, TodoDto.class);
@@ -62,11 +63,11 @@ public class TodoService {
 		if(result.isPresent()) {
 			todo = result.get();
 			if(todo.getStatus() != TodoStatusName.ACTIVE) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Closed or cancelled todos cannot be updated");
+				throw new BadRequestException("errors.app.todo.cancelledClosedNotUpdatable");
 			}
 			todo.setId(id);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo Not Found");
+			throw new EntityNotFoundException("errors.app.todo.notFound");
 		}
 		
 		todo = todoRepository.save(todo);
@@ -80,7 +81,7 @@ public class TodoService {
 		if(result.isPresent()) {
 			todoRepository.deleteById(id);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Todo Not Found");
+			throw new EntityNotFoundException("errors.app.todo.notFound");
 		}
 		
 		return true;

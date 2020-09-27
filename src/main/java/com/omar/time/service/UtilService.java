@@ -1,7 +1,6 @@
 package com.omar.time.service;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+import javax.persistence.EntityNotFoundException;
 
 import com.omar.time.model.Card;
 import com.omar.time.model.Comment;
@@ -20,7 +19,7 @@ public class UtilService {
 			 }
 		}
 		if((project.getCreatedBy() != userPrincipal.getId()) && !isAuthor) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not either owner or auditor for this project");
+			throw new EntityNotFoundException("errors.app.project.notFound");
 		}
     }
 	
@@ -34,7 +33,7 @@ public class UtilService {
 			}
 		}
 		if(stack == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Stack not found");
+			throw new EntityNotFoundException("errors.app.stack.notFound");
 		}
 		return stack;
 	}
@@ -49,7 +48,7 @@ public class UtilService {
 			}
 		}
 		if(card == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Card not found");
+			throw new EntityNotFoundException("errors.app.card.notFound");
 		}
 		return card;
 	}
@@ -64,7 +63,7 @@ public class UtilService {
 			}
 		}
 		if(task == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
+			throw new EntityNotFoundException("errors.app.task.notFound");
 		}
 		return task;
 	}
@@ -79,7 +78,7 @@ public class UtilService {
 			}
 		}
 		if(comment == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
+			throw new EntityNotFoundException("errors.app.comment.notFound");
 		}
 		return comment;
 	}
