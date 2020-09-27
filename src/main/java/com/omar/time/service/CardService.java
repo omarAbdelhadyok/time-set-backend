@@ -2,10 +2,10 @@ package com.omar.time.service;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.omar.time.dto.card.CardByIdDTO;
 import com.omar.time.dto.card.CardDTO;
@@ -40,7 +40,7 @@ public class CardService {
 			stack = UtilService.getStackFromProject(project, stackId);
 			card = UtilService.getCardFromStack(stack, cardId);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("Project Not Found");
 		}
 
 		return ObjectMapperUtils.map(card, CardByIdDTO.class);
@@ -56,7 +56,7 @@ public class CardService {
 			UtilService.handleUnathorized(project, userPrincipal);
 			stack = UtilService.getStackFromProject(project, stackId);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("Project Not Found");
 		}
 		Card card = ObjectMapperUtils.map(cardDTO, Card.class);
 		card.setStack(stack);
@@ -79,7 +79,7 @@ public class CardService {
 			card.setId(cardId);
 			card.setStack(stack);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("Project Not Found");
 		}
 		
 		return cardRepository.save(card);
@@ -100,7 +100,7 @@ public class CardService {
 			card.dismissStack();
 			cardRepository.deleteById(cardId);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("Project Not Found");
         }
 		
 		return true;

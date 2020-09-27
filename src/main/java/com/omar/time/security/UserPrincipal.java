@@ -40,7 +40,9 @@ public class UserPrincipal implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(Long id, String firstName, String lastName, String username, String mobile, String email, String password, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Long id, String firstName, String lastName, String username,
+    		String mobile, String email, String password,
+    		Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -59,7 +61,6 @@ public class UserPrincipal implements UserDetails {
         return new UserPrincipal(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
         		user.getMobile(), user.getEmail(), user.getPassword(), authorities);
     }
-
 
     @Override
     public boolean isAccountNonExpired() {

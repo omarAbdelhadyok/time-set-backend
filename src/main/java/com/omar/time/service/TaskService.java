@@ -2,12 +2,13 @@ package com.omar.time.service;
 
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.omar.time.dto.task.TaskDTO;
+import com.omar.time.exception.BadRequestException;
 import com.omar.time.model.Card;
 import com.omar.time.model.Project;
 import com.omar.time.model.Stack;
@@ -41,7 +42,7 @@ public class TaskService {
 			stack = UtilService.getStackFromProject(project, stackId);
 			card = UtilService.getCardFromStack(stack, cardId);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("Project Not Found");
 		}
 		
 		Task task = ObjectMapperUtils.map(taskDTO, Task.class);
@@ -69,12 +70,12 @@ public class TaskService {
 			
 			task = ObjectMapperUtils.map(taskDTO, Task.class);
 			if(task.getStatus() != StatusName.ACTIVE) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Closed or cancelled projects cannot be updated");
+				throw new BadRequestException("Closed or cancelled projects cannot be updated");
 			}
 			task.setId(taskId);	
 			task.setCard(card);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("Project Not Found");
 		}
 		
         return taskRepository.save(task);
@@ -101,7 +102,7 @@ public class TaskService {
 			task.setId(taskId);	
 			task.setCard(card);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("Project Not Found");
 		}
 		
 		return taskRepository.save(task);
@@ -125,7 +126,7 @@ public class TaskService {
 			task.dismissCard();
             taskRepository.deleteById(taskId);
 		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project Not Found");
+			throw new EntityNotFoundException("Project Not Found");
         }
 		
 		return true;

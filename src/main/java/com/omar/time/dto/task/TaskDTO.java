@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.omar.time.dto.Create;
 import com.omar.time.dto.Update;
@@ -20,12 +21,13 @@ public class TaskDTO extends UserDateDTO {
 
 	private long id;
 	
-	@NotBlank(groups = {Create.class, Update.class})
+	@NotBlank(groups = {Create.class, Update.class}, message = "{errors.task.notBlank}")
+	@Size(max = 150, groups = {Create.class, Update.class}, message = "{errors.task.maxLength}")
 	private String task;
 	
 	private LocalDateTime dueDate;
 	
-	@NotNull(groups = {Update.class, UpdateStatus.class})
+	@NotNull(groups = {Update.class, UpdateStatus.class}, message = "{errors.status.notNull}")
 	private StatusName status;
 	
 }
