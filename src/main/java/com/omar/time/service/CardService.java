@@ -40,7 +40,11 @@ public class CardService {
 			stack = UtilService.getStackFromProject(project, stackId);
 			card = UtilService.getCardFromStack(stack, cardId);
 		} else {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
+=======
+			throw new EntityNotFoundException("Project Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 
 		return ObjectMapperUtils.map(card, CardByIdDTO.class);
@@ -56,7 +60,11 @@ public class CardService {
 			UtilService.handleUnathorized(project, userPrincipal);
 			stack = UtilService.getStackFromProject(project, stackId);
 		} else {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
+=======
+			throw new EntityNotFoundException("Project Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		Card card = ObjectMapperUtils.map(cardDTO, Card.class);
 		card.setStack(stack);
@@ -79,7 +87,11 @@ public class CardService {
 			card.setId(cardId);
 			card.setStack(stack);
 		} else {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
+=======
+			throw new EntityNotFoundException("Project Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
 		return cardRepository.save(card);
@@ -100,7 +112,11 @@ public class CardService {
 			card.dismissStack();
 			cardRepository.deleteById(cardId);
 		} else {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
+=======
+			throw new EntityNotFoundException("Project Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
         }
 		
 		return true;

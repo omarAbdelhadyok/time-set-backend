@@ -43,7 +43,11 @@ public class TodoService {
 		if(result.isPresent()) {
 			todo = result.get();
 		} else {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.todo.notFound");
+=======
+			throw new EntityNotFoundException("Todo Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 
 		return ObjectMapperUtils.map(todo, TodoDto.class);
@@ -63,11 +67,19 @@ public class TodoService {
 		if(result.isPresent()) {
 			todo = result.get();
 			if(todo.getStatus() != TodoStatusName.ACTIVE) {
+<<<<<<< HEAD
 				throw new BadRequestException("errors.app.todo.cancelledClosedNotUpdatable");
 			}
 			todo.setId(id);
 		} else {
 			throw new EntityNotFoundException("errors.app.todo.notFound");
+=======
+				throw new BadRequestException("Closed or cancelled todos cannot be updated");
+			}
+			todo.setId(id);
+		} else {
+			throw new EntityNotFoundException("Todo Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
 		todo = todoRepository.save(todo);
@@ -81,7 +93,11 @@ public class TodoService {
 		if(result.isPresent()) {
 			todoRepository.deleteById(id);
 		} else {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.todo.notFound");
+=======
+			throw new EntityNotFoundException("Todo Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
 		return true;

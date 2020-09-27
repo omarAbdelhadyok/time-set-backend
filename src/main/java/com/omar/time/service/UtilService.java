@@ -1,6 +1,11 @@
 package com.omar.time.service;
 
 import javax.persistence.EntityNotFoundException;
+<<<<<<< HEAD
+=======
+
+import org.springframework.security.access.AccessDeniedException;
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 
 import com.omar.time.model.Card;
 import com.omar.time.model.Comment;
@@ -19,7 +24,11 @@ public class UtilService {
 			 }
 		}
 		if((project.getCreatedBy() != userPrincipal.getId()) && !isAuthor) {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
+=======
+			throw new AccessDeniedException("You are not either owner or auditor of this project");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
     }
 	
@@ -33,7 +42,11 @@ public class UtilService {
 			}
 		}
 		if(stack == null) {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.stack.notFound");
+=======
+			throw new EntityNotFoundException("Stack not found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		return stack;
 	}
@@ -48,7 +61,11 @@ public class UtilService {
 			}
 		}
 		if(card == null) {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.card.notFound");
+=======
+			throw new EntityNotFoundException("Card not found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		return card;
 	}
@@ -63,7 +80,11 @@ public class UtilService {
 			}
 		}
 		if(task == null) {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.task.notFound");
+=======
+			throw new EntityNotFoundException("Task not found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		return task;
 	}
@@ -78,7 +99,11 @@ public class UtilService {
 			}
 		}
 		if(comment == null) {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.comment.notFound");
+=======
+			throw new EntityNotFoundException("Comment not found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		return comment;
 	}

@@ -42,7 +42,11 @@ public class TaskService {
 			stack = UtilService.getStackFromProject(project, stackId);
 			card = UtilService.getCardFromStack(stack, cardId);
 		} else {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
+=======
+			throw new EntityNotFoundException("Project Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
 		Task task = ObjectMapperUtils.map(taskDTO, Task.class);
@@ -70,12 +74,20 @@ public class TaskService {
 			
 			task = ObjectMapperUtils.map(taskDTO, Task.class);
 			if(task.getStatus() != StatusName.ACTIVE) {
+<<<<<<< HEAD
 				throw new BadRequestException("errors.app.task.cancelledClosedNotUpdatable");
+=======
+				throw new BadRequestException("Closed or cancelled projects cannot be updated");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 			}
 			task.setId(taskId);	
 			task.setCard(card);
 		} else {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
+=======
+			throw new EntityNotFoundException("Project Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
         return taskRepository.save(task);
@@ -102,7 +114,11 @@ public class TaskService {
 			task.setId(taskId);	
 			task.setCard(card);
 		} else {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
+=======
+			throw new EntityNotFoundException("Project Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
 		return taskRepository.save(task);
@@ -126,7 +142,11 @@ public class TaskService {
 			task.dismissCard();
             taskRepository.deleteById(taskId);
 		} else {
+<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
+=======
+			throw new EntityNotFoundException("Project Not Found");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
         }
 		
 		return true;

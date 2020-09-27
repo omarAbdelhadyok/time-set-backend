@@ -81,11 +81,19 @@ public class AuthService {
 	@Transactional
 	public ResponseEntity<?> signUp(SignupRequestDTO signupRequestDTO) {
         if(userRepository.existsByUsername(signupRequestDTO.getUsername())) {
+<<<<<<< HEAD
             throw new BadRequestException("errors.app.username.taken");
         }
 
         if(userRepository.existsByEmail(signupRequestDTO.getEmail())) {
             throw new BadRequestException("errors.app.email.taken");
+=======
+            throw new BadRequestException("Username is already taken!");
+        }
+
+        if(userRepository.existsByEmail(signupRequestDTO.getEmail())) {
+            throw new BadRequestException("Email Address already taken!");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
         }
         
         String password = signupRequestDTO.getPassword();
@@ -97,7 +105,11 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+<<<<<<< HEAD
             .orElseThrow(() -> new BadRequestException("errors.app.role.notSet"));
+=======
+            .orElseThrow(() -> new BadRequestException("User role not set"));
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 
         user.setRoles(Collections.singleton(userRole));
 
@@ -109,7 +121,11 @@ public class AuthService {
         
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());
+<<<<<<< HEAD
         mailMessage.setSubject("Complete Registration");
+=======
+        mailMessage.setSubject("Complete Registration!");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
         mailMessage.setFrom("Timeset");
         mailMessage.setText("To confirm your account, please click here : "
         +"http://localhost:8080/api/auth/confirm-account?token="+confirmationToken.getConfirmationToken());
@@ -123,6 +139,7 @@ public class AuthService {
 
 	@Transactional
     public boolean confirmUserAccount(String confirmationToken) {
+<<<<<<< HEAD
         ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken)
         		.orElseThrow(() -> new RuntimeException("Something went wrong"));
 
@@ -138,6 +155,24 @@ public class AuthService {
 		}
         return true;
         
+=======
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken);
+
+        if(token != null) {
+            User user = userRepository.findByEmail(token.getUser().getEmail()).orElseThrow(() ->
+            	new EntityNotFoundException("User not found!")
+            );
+            user.setActivatedMail(true);
+            try {
+            	userRepository.save(user);
+                confirmationTokenRepository.deleteByTokenid(token.getTokenid());
+			} catch (Exception e) {
+				throw new RuntimeException("Something went wrong");
+			}
+            return true;
+        }
+        throw new RuntimeException("Something went wrong");
+>>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
     }
 	
 }
