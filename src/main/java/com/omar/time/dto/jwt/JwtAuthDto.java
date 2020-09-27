@@ -1,15 +1,16 @@
-package com.omar.time.payload;
-
+package com.omar.time.dto.jwt;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class JwtAuthenticationResponse {
+public class JwtAuthDto {
+	
     private String accessToken;
     private String tokenType = "Bearer";
 
-    public JwtAuthenticationResponse(String accessToken) {
+    public JwtAuthDto(String accessToken) {
         this.accessToken = accessToken;
     }
+
 }
