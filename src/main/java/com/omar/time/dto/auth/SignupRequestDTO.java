@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 public class SignupRequestDTO {
 
-<<<<<<< HEAD
 	@Size(max = 40, message = "{errors.validation.user.firstName.maxLength}")
     private String firstName;
     
@@ -33,28 +32,6 @@ public class SignupRequestDTO {
 
     @NotBlank(message = "{errors.validation.user.password.notBlank}")
     @Size(min = 8, max = 20, message = "{errors.validation.user.password.minMax}")
-=======
-	@Size(max = 40, message = "{errors.user.firstName.maxLength}")
-    private String firstName;
-    
-    @Size(max = 40, message = "{errors.user.lastName.maxLength}")
-    private String lastName;
-
-    @NotBlank(message = "{errors.user.username.notBlank}")
-    @Size(min = 3, max = 40, message = "{errors.user.username.minMax}")
-    private String username;
-    
-    @Size(max = 20, message = "{errors.user.mobile.maxLength}")
-    private String mobile;
-
-    @NotBlank(message = "{errors.user.email.notBlank}")
-    @Size(max = 40, message = "{errors.user.email.maxLength}")
-    @Email(message = "{errors.user.email.mailValidity}")
-    private String email;
-
-    @NotBlank(message = "{errors.user.password.notBlank}")
-    @Size(min = 8, max = 20, message = "{errors.user.password.minMax}")
->>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
     private String password;
 	
 }

@@ -40,11 +40,7 @@ public class CommentService {
 			stack = UtilService.getStackFromProject(project, stackId);
 			card = UtilService.getCardFromStack(stack, cardId);
 		} else {
-<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
-=======
-			throw new EntityNotFoundException("Project Not Found");
->>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
 		Comment comment = ObjectMapperUtils.map(commentDTO, Comment.class);
@@ -74,11 +70,7 @@ public class CommentService {
 			comment.setId(commentId);	
 			comment.setCard(card);
 		} else {
-<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
-=======
-			throw new EntityNotFoundException("Project Not Found");
->>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
         return commentRepository.save(comment);
@@ -102,11 +94,7 @@ public class CommentService {
 			comment.dismissCard();
 			commentRepository.deleteById(commentId);
 		} else {
-<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
-=======
-			throw new EntityNotFoundException("Project Not Found");
->>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
         }
 		
 		return true;

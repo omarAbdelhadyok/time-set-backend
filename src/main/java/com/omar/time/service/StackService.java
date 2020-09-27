@@ -34,11 +34,7 @@ public class StackService {
 			project = result.get();
 			UtilService.handleUnathorized(project, userPrincipal);
 		} else {
-<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
-=======
-			throw new EntityNotFoundException("Project Not Found");
->>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
 		Stack stack = ObjectMapperUtils.map(stackDTO, Stack.class);
@@ -62,11 +58,7 @@ public class StackService {
 			stack.setId(stackId);
 			stack.setProject(project);
 		} else {
-<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
-=======
-			throw new EntityNotFoundException("Project Not Found");
->>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
 		stack = stackRepository.save(stack);
@@ -85,11 +77,7 @@ public class StackService {
 			stack.dismissProject();
 			stackRepository.deleteById(stackId);
 		} else {
-<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.project.notFound");
-=======
-			throw new EntityNotFoundException("Project Not Found");
->>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
         }
 		
 		return true;

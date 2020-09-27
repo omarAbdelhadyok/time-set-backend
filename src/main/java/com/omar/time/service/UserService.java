@@ -36,11 +36,7 @@ public class UserService {
 	
 	public UserDTO get(UserPrincipal userPrincipal) {
 		User user = userRepository.findById(userPrincipal.getId())
-<<<<<<< HEAD
 				.orElseThrow(() -> new RuntimeException("errors.app.server"));
-=======
-				.orElseThrow(() -> new RuntimeException("Something went wrong"));
->>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		
 		return ObjectMapperUtils.map(user, UserDTO.class);
 	}
@@ -49,11 +45,7 @@ public class UserService {
 		List<User> result = userRepository.findByUsernameOrEmailContaining(userNameOrEmail, userNameOrEmail);
 		
 		if(result.isEmpty()) {
-<<<<<<< HEAD
 			throw new EntityNotFoundException("errors.app.user.notFound");
-=======
-			throw new EntityNotFoundException("User Not Found");
->>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
 		return ObjectMapperUtils.mapAll(result, UserDTO.class);
@@ -64,11 +56,7 @@ public class UserService {
 		User user = ObjectMapperUtils.map(userPrincipal, User.class);
 		
 		if(user.isActivatedMail() == true) {
-<<<<<<< HEAD
 			throw new BadRequestException("errors.app.email.alreadyVerified");
-=======
-			throw new BadRequestException("Email already verified!");
->>>>>>> 4de2425f60ccc091d3a544b44ac3af7938fdb889
 		}
 		
 		ConfirmationToken confirmationToken = null;
