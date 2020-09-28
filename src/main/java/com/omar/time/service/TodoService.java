@@ -1,7 +1,5 @@
 package com.omar.time.service;
 
-import java.util.Optional;
-
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,6 @@ public class TodoService {
 
 	private TodoRepository todoRepository;
 	
-	
 	@Autowired
 	public TodoService(TodoRepository todoRepository) {
 		this.todoRepository = todoRepository;
@@ -37,15 +34,10 @@ public class TodoService {
 	}
 	
 	public TodoDto get(UserPrincipal userPrincipal, long id) {
-		Optional<Todo> result = todoRepository.findByIdAndCreatedBy(id, userPrincipal.getId());
+		Todo todo = todoRepository.findByIdAndCreatedBy(id, userPrincipal.getId()).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.todo.notFound")
+		);
 		
-		Todo todo = null;
-		if(result.isPresent()) {
-			todo = result.get();
-		} else {
-			throw new EntityNotFoundException("errors.app.todo.notFound");
-		}
-
 		return ObjectMapperUtils.map(todo, TodoDto.class);
 	}
 	
@@ -53,36 +45,30 @@ public class TodoService {
 		Todo todo = ObjectMapperUtils.map(todoDto, Todo.class);
 		todo.setStatus(TodoStatusName.ACTIVE);
 		todo = todoRepository.save(todo);
+		
 		return ObjectMapperUtils.map(todo, TodoDto.class);
     }
 	
 	public TodoDto update(UserPrincipal userPrincipal, long id, TodoDto todoDto) {
-		Optional<Todo> result = todoRepository.findByIdAndCreatedBy(id, userPrincipal.getId());
+		Todo todo = todoRepository.findByIdAndCreatedBy(id, userPrincipal.getId()).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.todo.notFound")
+		);
 		
-		Todo todo = null;
-		if(result.isPresent()) {
-			todo = result.get();
-			if(todo.getStatus() != TodoStatusName.ACTIVE) {
-				throw new BadRequestException("errors.app.todo.cancelledClosedNotUpdatable");
-			}
-			todo.setId(id);
-		} else {
-			throw new EntityNotFoundException("errors.app.todo.notFound");
+		if(todo.getStatus() != TodoStatusName.ACTIVE) {
+			throw new BadRequestException("errors.app.todo.cancelledClosedNotUpdatable");
 		}
-		
+		todo.setId(id);		
 		todo = todoRepository.save(todo);
 		
 		return ObjectMapperUtils.map(todo, TodoDto.class);
 	}
 	
 	public boolean delete(UserPrincipal userPrincipal, long id) {
-		Optional<Todo> result = todoRepository.findByIdAndCreatedBy(id, userPrincipal.getId());
-		
-		if(result.isPresent()) {
-			todoRepository.deleteById(id);
-		} else {
-			throw new EntityNotFoundException("errors.app.todo.notFound");
-		}
+		todoRepository.findByIdAndCreatedBy(id, userPrincipal.getId()).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.todo.notFound")
+		);
+	
+		todoRepository.deleteById(id);
 		
 		return true;
 	}

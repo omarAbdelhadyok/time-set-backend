@@ -1,7 +1,5 @@
 package com.omar.time.service;
 
-import java.util.Optional;
-
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,31 +20,25 @@ import com.omar.time.util.ObjectMapperUtils;
 @Service
 public class TaskService {
 
-	@Autowired
 	private TaskRepository taskRepository;
+	private ProjectRepository projectRepository;
 	
 	@Autowired
-	private ProjectRepository projectRepository;
+	public TaskService(TaskRepository taskRepository, ProjectRepository projectRepository) {
+		this.taskRepository = taskRepository;
+		this.projectRepository = projectRepository;
+	}
 	
 		
 	public Task create(UserPrincipal userPrincipal, TaskDTO taskDTO, long projectId, long stackId, long cardId) {
-		Optional<Project> result = projectRepository.findById(projectId);
+		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
 		
-		Project project = null;
-		Stack stack = null;
-		Card card = null;
-		
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-			stack = UtilService.getStackFromProject(project, stackId);
-			card = UtilService.getCardFromStack(stack, cardId);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
-		}
-		
+		UtilService.handleUnathorized(project, userPrincipal);
+		Stack stack = UtilService.getStackFromProject(project, stackId);
+		Card card = UtilService.getCardFromStack(stack, cardId);
 		Task task = ObjectMapperUtils.map(taskDTO, Task.class);
-		
 		task.setStatus(StatusName.ACTIVE);
 		task.setCard(card);
         
@@ -54,80 +46,52 @@ public class TaskService {
     }
 	
 	public Task update(UserPrincipal userPrincipal, TaskDTO taskDTO, long projectId, long stackId, long cardId, long taskId) {
-		Optional<Project> result = projectRepository.findById(projectId);
+		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
 		
-		Project project = null;
-		Stack stack = null;
-		Card card = null;
-		Task task = null;
-		
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-			stack = UtilService.getStackFromProject(project, stackId);
-			card = UtilService.getCardFromStack(stack, cardId);
-			UtilService.getTaskFromCard(card, taskId);
-			
-			task = ObjectMapperUtils.map(taskDTO, Task.class);
-			if(task.getStatus() != StatusName.ACTIVE) {
-				throw new BadRequestException("errors.app.task.cancelledClosedNotUpdatable");
-			}
-			task.setId(taskId);	
-			task.setCard(card);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
+		UtilService.handleUnathorized(project, userPrincipal);
+		Stack stack = UtilService.getStackFromProject(project, stackId);
+		Card card = UtilService.getCardFromStack(stack, cardId);
+		UtilService.getTaskFromCard(card, taskId);	
+		Task task = ObjectMapperUtils.map(taskDTO, Task.class);
+		if(task.getStatus() != StatusName.ACTIVE) {
+			throw new BadRequestException("errors.app.task.cancelledClosedNotUpdatable");
 		}
+		task.setId(taskId);	
+		task.setCard(card);
 		
         return taskRepository.save(task);
     }
 	
 	
 	public Task updateStatus(UserPrincipal userPrincipal, TaskDTO taskDTO, long projectId, long stackId, long cardId, long taskId) {
-		Optional<Project> result = projectRepository.findById(projectId);
+		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
 		
-		Project project = null;
-		Stack stack = null;
-		Card card = null;
-		Task task = null;
-		
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-			stack = UtilService.getStackFromProject(project, stackId);
-			card = UtilService.getCardFromStack(stack, cardId);
-			UtilService.getTaskFromCard(card, taskId);
-			
-			task = ObjectMapperUtils.map(taskDTO, Task.class);
-
-			task.setId(taskId);	
-			task.setCard(card);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
-		}
+		UtilService.handleUnathorized(project, userPrincipal);
+		Stack stack = UtilService.getStackFromProject(project, stackId);
+		Card card = UtilService.getCardFromStack(stack, cardId);
+		UtilService.getTaskFromCard(card, taskId);
+		Task task = ObjectMapperUtils.map(taskDTO, Task.class);
+		task.setId(taskId);	
+		task.setCard(card);
 		
 		return taskRepository.save(task);
 	}
 	
 	public boolean delete(UserPrincipal userPrincipal, long projectId, long stackId, long cardId, long taskId) {
-		Optional<Project> result = projectRepository.findById(projectId);
-		
-		Project project = null;
-		Stack stack = null;
-		Card card = null;
-		Task task = null;
-		
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-			stack = UtilService.getStackFromProject(project, stackId);
-			card = UtilService.getCardFromStack(stack, cardId);
-			task = UtilService.getTaskFromCard(card, taskId);
-			
-			task.dismissCard();
-            taskRepository.deleteById(taskId);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
-        }
+		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
+	
+		UtilService.handleUnathorized(project, userPrincipal);
+		Stack stack = UtilService.getStackFromProject(project, stackId);
+		Card card = UtilService.getCardFromStack(stack, cardId);
+		Task task = UtilService.getTaskFromCard(card, taskId);
+		task.dismissCard();
+        taskRepository.deleteById(taskId);
 		
 		return true;
     }

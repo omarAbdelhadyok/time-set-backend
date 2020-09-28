@@ -1,7 +1,5 @@
 package com.omar.time.service;
 
-import java.util.Optional;
-
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +22,14 @@ import com.omar.time.util.ObjectMapperUtils;
 @Service
 public class ProjectService {
 
-	@Autowired
 	private ProjectRepository projectRepository;
+	private UserRepository userRepository;
 	
 	@Autowired
-	private UserRepository userRepository;
+	public ProjectService(ProjectRepository projectRepository, UserRepository userRepository) {
+		this.projectRepository = projectRepository;
+		this.userRepository = userRepository;
+	}
 	
 	
 	public Page<AllProjectsDTO> getAll(UserPrincipal userPrincipal, Pageable pageable) {
@@ -40,16 +41,11 @@ public class ProjectService {
 	}
 	
 	public ProjectDTO get(UserPrincipal userPrincipal, long projectId) {
-		Optional<Project> result = projectRepository.findById(projectId);
-		
-		Project project = null;
-		
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
-		}
+		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
+
+		UtilService.handleUnathorized(project, userPrincipal);
 
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
 	}
@@ -58,35 +54,21 @@ public class ProjectService {
 		if(userPrincipal.getId() == userId) {
 			throw new BadRequestException("errors.app.project.alreadyOwner");
 		}
-		
-		Optional<Project> result = projectRepository.findById(projectId);
-		Optional<User> userResult = userRepository.findById(userId);
-		
-		Project project = null;
-		User user = null;
-		
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
+		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
+		User user = userRepository.findById(userId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.user.notFound")
+		);
 			
-			if(userResult.isPresent()) {
-				user = userResult.get();
-				project.setId(projectId);
-				
-				for(User author: project.getAuthors()) {
-					if(author.getId() == userId) {
-						throw new BadRequestException("errors.app.project.alreadyAuthor");
-					}
-				}
-				
-				project.addAuthor(user);
-			} else {
-				throw new EntityNotFoundException("errors.app.user.notFound");
+		UtilService.handleUnathorized(project, userPrincipal);		
+		project.setId(projectId);		
+		for(User author: project.getAuthors()) {
+			if(author.getId() == userId) {
+				throw new BadRequestException("errors.app.project.alreadyAuthor");
 			}
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
 		}
-		
+		project.addAuthor(user);
 		project = projectRepository.save(project);
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
 	}
@@ -99,99 +81,72 @@ public class ProjectService {
     }
 	
 	public ProjectDTO update(UserPrincipal userPrincipal, ProjectDTO projectDTO, long projectId) {
-		Optional<Project> result = projectRepository.findById(projectId);
+		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
 		
-		Project project = null;
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-			ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
-			if(project.getStatus() != StatusName.ACTIVE) {
-				throw new BadRequestException("errors.app.project.cancelledClosedNotUpdatable");
-			}
-			project.setId(projectId);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
+		UtilService.handleUnathorized(project, userPrincipal);
+		ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
+		if(project.getStatus() != StatusName.ACTIVE) {
+			throw new BadRequestException("errors.app.project.cancelledClosedNotUpdatable");
 		}
+		project.setId(projectId);
 		project = projectRepository.save(project);
+		
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
     }
 	
 	public ProjectDTO updateStatus(UserPrincipal userPrincipal, ProjectDTO projectDTO, long projectId) {
-		Optional<Project> result = projectRepository.findById(projectId);
+		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
 		
-		Project project = null;
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-			ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
-			project.setId(projectId);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
-		}
-		
+		UtilService.handleUnathorized(project, userPrincipal);
+		ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
+		project.setId(projectId);	
 		project = projectRepository.save(project);
+		
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
 	}
 
     public boolean delete(UserPrincipal userPrincipal, long id) {
-        Optional<Project> result = projectRepository.findById(id);
+        Project project = projectRepository.findById(id).orElseThrow(() -> 
+        	new EntityNotFoundException("errors.app.project.notFound")
+		);
 		
-        Project project = null;
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-            projectRepository.deleteById(id);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
-        }
-		
+		UtilService.handleUnathorized(project, userPrincipal);
+        projectRepository.deleteById(id);
+        
 		return true;
     }
     
     public boolean deleteAuthorityFromProject(UserPrincipal userPrincipal, long projectId) {
-    	Optional<Project> result = projectRepository.findById(projectId);
-    	Optional<User> userResult = userRepository.findById(userPrincipal.getId());
+    	Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+    		new EntityNotFoundException("errors.app.project.notFound")
+		);
+    	User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> 
+    		new EntityNotFoundException("errors.app.user.notFound")
+		);
     	
-        Project project = null;
-        User author = null; 
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-			
-			if(userResult.isPresent()) {
-				project.deleteAuthor(author);
-			} else {
-				throw new EntityNotFoundException("errors.app.user.notFound");
-			}
-			
-			projectRepository.save(project);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
-        }
+		UtilService.handleUnathorized(project, userPrincipal);		
+		project.deleteAuthor(user);
+		projectRepository.save(project);
+		
     	return true;
     }
     
     public boolean deleteAuthorFromProject(UserPrincipal userPrincipal, long projectId, long userId) {
-    	Optional<Project> result = projectRepository.findById(projectId);
-    	Optional<User> userResult = userRepository.findById(userPrincipal.getId());
+    	Project project = projectRepository.findById(projectId).orElseThrow(() ->
+    		new EntityNotFoundException("errors.app.project.notFound")
+		);
+    	User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> 
+    		new EntityNotFoundException("errors.app.user.notFound")
+		);
     	
-    	 Project project = null;
-         User author = null; 
- 		if(result.isPresent()) {
- 			project = result.get();
- 			UtilService.handleUnathorized(project, userPrincipal);
- 			
- 			if(userResult.isPresent()) {
- 				project.deleteAuthor(author);
- 			} else {
- 				throw new EntityNotFoundException("errors.app.user.notFound");
- 			}
- 			
- 			projectRepository.save(project);
- 		} else {
- 			throw new EntityNotFoundException("errors.app.project.notFound");
-         }
+		UtilService.handleUnathorized(project, userPrincipal);
+		project.deleteAuthor(user);	
+		projectRepository.save(project);
+ 		
      	return true;
     }
 	

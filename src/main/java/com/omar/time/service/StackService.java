@@ -1,7 +1,5 @@
 package com.omar.time.service;
 
-import java.util.Optional;
-
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,67 +16,53 @@ import com.omar.time.util.ObjectMapperUtils;
 @Service
 public class StackService {
 
-	@Autowired
 	private StackRepository stackRepository;
+	private ProjectRepository projectRepository;
 	
 	@Autowired
-	private ProjectRepository projectRepository;
+	public StackService(StackRepository stackRepository, ProjectRepository projectRepository) {
+		this.stackRepository = stackRepository;
+		this.projectRepository = projectRepository;
+	}
 	
 	
 	public StackDTO create(UserPrincipal userPrincipal, StackDTO stackDTO, long projectId) {
-		Optional<Project> result = projectRepository.findById(projectId);
+		Project project = projectRepository.findById(projectId).orElseThrow(() ->
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
 		
-		Project project = null;
-		
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
-		}
-		
+		UtilService.handleUnathorized(project, userPrincipal);
 		Stack stack = ObjectMapperUtils.map(stackDTO, Stack.class);
-		
 		stack.setProject(project);
-        
 		stack = stackRepository.save(stack);
+		
 		return ObjectMapperUtils.map(stack, StackDTO.class);
     }
 	
 	public StackDTO update(UserPrincipal userPrincipal, StackDTO stackDTO, long projectId, long stackId) {
-		Optional<Project> result = projectRepository.findById(projectId);
+		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
 		
-		Project project = null;
-		Stack stack = null;
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-			UtilService.getStackFromProject(project, stackId);
-			stack = ObjectMapperUtils.map(stackDTO, Stack.class);
-			stack.setId(stackId);
-			stack.setProject(project);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
-		}
-		
+		UtilService.handleUnathorized(project, userPrincipal);
+		UtilService.getStackFromProject(project, stackId);
+		Stack stack = ObjectMapperUtils.map(stackDTO, Stack.class);
+		stack.setId(stackId);
+		stack.setProject(project);
 		stack = stackRepository.save(stack);
+		
 		return ObjectMapperUtils.map(stack, StackDTO.class);
     }
 	
 	public boolean delete(UserPrincipal userPrincipal, long projectId, long stackId) {
-		Optional<Project> result = projectRepository.findById(projectId);
+		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.project.notFound")
+		);
 		
-		Project project = null;
-		Stack stack = null;
-		if(result.isPresent()) {
-			project = result.get();
-			UtilService.handleUnathorized(project, userPrincipal);
-			stack = UtilService.getStackFromProject(project, stackId);
-			stack.dismissProject();
-			stackRepository.deleteById(stackId);
-		} else {
-			throw new EntityNotFoundException("errors.app.project.notFound");
-        }
+		UtilService.handleUnathorized(project, userPrincipal);
+		Stack stack = UtilService.getStackFromProject(project, stackId);
+		stack.dismissProject();
+		stackRepository.deleteById(stackId);
 		
 		return true;
     }
