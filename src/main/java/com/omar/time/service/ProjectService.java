@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.omar.time.dto.project.AllProjectsDTO;
@@ -50,22 +51,30 @@ public class ProjectService {
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
 	}
 	
-	public ProjectDTO addAuthor(UserPrincipal userPrincipal, long projectId, long userId) {
-		if(userPrincipal.getId() == userId) {
+	public ProjectDTO addAuthor(UserPrincipal userPrincipal, long projectId, long authorId) {
+		//throw error if the author id is the same as the user id (owner) 
+		if(userPrincipal.getId() == authorId) {
 			throw new BadRequestException("errors.app.project.alreadyOwner");
 		}
 		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
 		);
-		User user = userRepository.findById(userId).orElseThrow(() -> 
+		User user = userRepository.findById(authorId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.user.notFound")
 		);
-			
-		UtilService.handleUnathorized(project, userPrincipal);		
-		project.setId(projectId);		
-		for(User author: project.getAuthors()) {
-			if(author.getId() == userId) {
-				throw new BadRequestException("errors.app.project.alreadyAuthor");
+
+		//throw not found exception if user is not project owner nor he's an author
+		UtilService.handleUnathorized(project, userPrincipal);
+		
+		//throw access denied exception if user is not the owner of this project
+		if(project.getCreatedBy() != userPrincipal.getId()) {
+			throw new AccessDeniedException("errors.app.project.notOwner");
+		}
+		
+		//check if authorId already exist in authors list of this project
+		for(User author: project.getEditors()) {
+			if(author.getId() == authorId) {
+				throw new BadRequestException("errors.app.project.alreadyEditor");
 			}
 		}
 		project.addAuthor(user);
@@ -87,6 +96,8 @@ public class ProjectService {
 		
 		UtilService.handleUnathorized(project, userPrincipal);
 		ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
+		
+		//check if project is not active so it cannot be updated
 		if(project.getStatus() != StatusName.ACTIVE) {
 			throw new BadRequestException("errors.app.project.cancelledClosedNotUpdatable");
 		}
@@ -144,6 +155,11 @@ public class ProjectService {
 		);
     	
 		UtilService.handleUnathorized(project, userPrincipal);
+		
+		//throw access denied exception if user is not the owner of this project
+		if(project.getCreatedBy() != userPrincipal.getId()) {
+			throw new AccessDeniedException("errors.app.project.notOwner");
+		}
 		project.deleteAuthor(user);	
 		projectRepository.save(project);
  		

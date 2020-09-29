@@ -25,10 +25,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "projects")
-public @Data class Project extends UserDateAudit {
+public class Project extends UserDateAudit {
 	
 	private static final long serialVersionUID = 6232773173017994344L;
 
@@ -53,10 +54,10 @@ public @Data class Project extends UserDateAudit {
 	private List<Stack> stacks;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "project_users",
+    @JoinTable(name = "project_editors",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-	private List<User> authors = new LinkedList<>();
+	private List<User> editors = new LinkedList<>();
 	
 
 	public Project(String title, String description, StatusName status) {
@@ -66,17 +67,17 @@ public @Data class Project extends UserDateAudit {
 	}
 
 	public void addAuthor(User author) {
-		this.authors.add(author);
+		this.editors.add(author);
 	}
 	
 	public boolean deleteAuthor(User author) {
 		boolean deleted = false;
-		for(int index = 0; index < this.getAuthors().size(); index++) {
-			if(this.getAuthors().get(index).getId() == author.getId()) {
-				this.authors.remove(index);
+		for(int index = 0; index < this.getEditors().size(); index++) {
+			if(this.getEditors().get(index).getId() == author.getId()) {
+				this.editors.remove(index);
 				deleted = true;
 			} else {
-				throw new RuntimeException("User is not an author");
+				throw new RuntimeException("errors.app.project.userNotEditor");
 			}
 		}
 		

@@ -11,13 +11,16 @@ import com.omar.time.security.UserPrincipal;
 
 public class UtilService {
 
+	//handle unauthorized users (ones that are not owners nor authors on this project)
 	public static void handleUnathorized(Project project, UserPrincipal userPrincipal) {
     	boolean isAuthor = false;
-		for(int i = 0; i < project.getAuthors().size(); i++) {
-			 if(project.getAuthors().get(i).getId() == userPrincipal.getId()) {
+    	//find if user is an author
+		for(int i = 0; i < project.getEditors().size(); i++) {
+			 if(project.getEditors().get(i).getId() == userPrincipal.getId()) {
 				 isAuthor = true;
 			 }
 		}
+		//throw not found exception if user is not the owner or an author
 		if((project.getCreatedBy() != userPrincipal.getId()) && !isAuthor) {
 			throw new EntityNotFoundException("errors.app.project.notFound");
 		}

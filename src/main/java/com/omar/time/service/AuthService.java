@@ -32,19 +32,12 @@ import com.omar.time.security.JwtTokenProvider;
 public class AuthService {
 	
 	private AuthenticationManager authenticationManager;
-	
 	private JwtTokenProvider tokenProvider;
-	
 	private UserRepository userRepository;
-	
 	private RoleRepository roleRepository;
-	
 	private PasswordEncoder passwordEncoder;
-	
 	private ConfirmationTokenRepository confirmationTokenRepository;
-
     private EmailSenderService emailSenderService;
-	
 	
 	@Autowired
 	public AuthService(AuthenticationManager authenticationManager,
@@ -62,9 +55,10 @@ public class AuthService {
 		this.confirmationTokenRepository = confirmationTokenRepository;
 		this.emailSenderService = emailSenderService;
 	}
+	
 
-	@Transactional
 	public ResponseEntity<?> login(LoginRequestDTO loginRequestDTO) {
+		//new user name password authentication object
 		Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginRequestDTO.getUsernameOrEmail(),
@@ -72,50 +66,52 @@ public class AuthService {
             )
         );
 
+		//set authentication on security context
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        //generate JWT token from the token provider
         String jwt = tokenProvider.generateToken(authentication);
+        
         return ResponseEntity.ok(new JwtAuthDto(jwt));
 	}
 	
-	@Transactional
 	public ResponseEntity<?> signUp(SignupRequestDTO signupRequestDTO) {
+		//make sure user name and email are unique
         if(userRepository.existsByUsername(signupRequestDTO.getUsername())) {
             throw new BadRequestException("errors.app.username.taken");
         }
-
         if(userRepository.existsByEmail(signupRequestDTO.getEmail())) {
             throw new BadRequestException("errors.app.email.taken");
         }
         
+        //saving not encrypted password to be used with signing in
         String password = signupRequestDTO.getPassword();
-
+        
         // Creating user's account
         User user = new User(signupRequestDTO.getFirstName(), signupRequestDTO.getLastName(), signupRequestDTO.getUsername(), 
         		signupRequestDTO.getMobile(), signupRequestDTO.getEmail(), signupRequestDTO.getPassword());
-
+        
+        //encrypting password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
+        //check if role name exists
         Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
             .orElseThrow(() -> new BadRequestException("errors.app.role.notSet"));
 
         user.setRoles(Collections.singleton(userRole));
-
         User result = userRepository.save(user);
-        
-        ConfirmationToken confirmationToken = new ConfirmationToken(user);
 
+        //generating, saving and sending confirmation token to user email
+        ConfirmationToken confirmationToken = new ConfirmationToken(user);
         confirmationTokenRepository.save(confirmationToken);
-        
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(user.getEmail());
         mailMessage.setSubject("Complete Registration");
         mailMessage.setFrom("Timeset");
         mailMessage.setText("To confirm your account, please click here : "
         +"http://localhost:8080/api/auth/confirm-account?token="+confirmationToken.getConfirmationToken());
-
         emailSenderService.sendEmail(mailMessage);
         
+        //creating a login request object to auto login user
         LoginRequestDTO loginRequest = new LoginRequestDTO(result.getUsername(), password);
 
         return login(loginRequest);
@@ -123,19 +119,20 @@ public class AuthService {
 
 	@Transactional
     public boolean confirmUserAccount(String confirmationToken) {
-        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken)
-        		.orElseThrow(() -> new RuntimeException("Something went wrong"));
-
-        User user = userRepository.findByEmail(token.getUser().getEmail()).orElseThrow(() ->
-        	new EntityNotFoundException("errors.app.user.notFound")
+		//check if the confirmation token and user exist
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken).orElseThrow(
+    		() -> new RuntimeException("Something went wrong")
+		);
+        User user = userRepository.findByEmail(token.getUser().getEmail()).orElseThrow(
+    		() -> new EntityNotFoundException("errors.app.user.notFound")
         );
+        
+        //set user activatedMail to true
         user.setActivatedMail(true);
-        try {
-        	userRepository.save(user);
-            confirmationTokenRepository.deleteByTokenid(token.getTokenid());
-		} catch (Exception e) {
-			throw new RuntimeException("errors.app.server");
-		}
+        //save user and delete confirmation token
+    	userRepository.save(user);
+        confirmationTokenRepository.deleteByTokenid(token.getTokenid());
+		
         return true;
     }
 	

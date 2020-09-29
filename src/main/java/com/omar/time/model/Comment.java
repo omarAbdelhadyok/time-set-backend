@@ -17,10 +17,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "comments")
-public @Data class Comment extends UserDateAudit {
+public class Comment extends UserDateAudit {
 
 	private static final long serialVersionUID = 4862412025483650698L;
 

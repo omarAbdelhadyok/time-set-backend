@@ -22,10 +22,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "stacks")
-public @Data class Stack extends UserDateAudit {
+public class Stack extends UserDateAudit {
 
 	private static final long serialVersionUID = -2496911141918545637L;
 

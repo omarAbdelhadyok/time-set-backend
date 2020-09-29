@@ -41,11 +41,11 @@ public class ProjectController {
 		return projectService.get(userPrincipal, id);
 	}
 	
-	@GetMapping("/{id}/addAuthor/{userId}")
+	@GetMapping("/{id}/addAuthor/{authorId}")
 	public ProjectDTO addAuthor(@CurrentUser UserPrincipal userPrincipal,
 			@PathVariable long id,
-			@PathVariable long userId) {
-		return projectService.addAuthor(userPrincipal, id, userId);
+			@PathVariable long authorId) {
+		return projectService.addAuthor(userPrincipal, id, authorId);
 	}
 	
 	@PostMapping

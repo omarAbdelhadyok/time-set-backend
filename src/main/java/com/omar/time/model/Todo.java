@@ -16,10 +16,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "todos")
-public @Data class Todo extends UserDateAudit {
+public class Todo extends UserDateAudit {
 
 	private static final long serialVersionUID = 1693573394440176145L;
 

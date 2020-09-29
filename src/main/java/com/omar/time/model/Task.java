@@ -22,11 +22,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tasks")
 @DynamicUpdate
-public @Data class Task extends UserDateAudit {
+public class Task extends UserDateAudit {
 
 	private static final long serialVersionUID = -261060587250708700L;
 

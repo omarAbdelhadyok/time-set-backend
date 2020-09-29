@@ -27,6 +27,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users", uniqueConstraints = { //define unique columns
@@ -37,7 +38,7 @@ import lombok.NoArgsConstructor;
         "email"
     })
 })
-public @Data class User extends DateAudit {
+public class User extends DateAudit {
 
 	private static final long serialVersionUID = 527585354298775504L;
 
