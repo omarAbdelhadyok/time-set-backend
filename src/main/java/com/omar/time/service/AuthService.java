@@ -2,8 +2,6 @@ package com.omar.time.service;
 
 import java.util.Collections;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.omar.time.dto.auth.LoginRequestDTO;
 import com.omar.time.dto.auth.SignupRequestDTO;
@@ -115,25 +112,6 @@ public class AuthService {
         LoginRequestDTO loginRequest = new LoginRequestDTO(result.getUsername(), password);
 
         return login(loginRequest);
-    }
-
-	@Transactional
-    public boolean confirmUserAccount(String confirmationToken) {
-		//check if the confirmation token and user exist
-        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken).orElseThrow(
-    		() -> new RuntimeException("Something went wrong")
-		);
-        User user = userRepository.findByEmail(token.getUser().getEmail()).orElseThrow(
-    		() -> new EntityNotFoundException("errors.app.user.notFound")
-        );
-        
-        //set user activatedMail to true
-        user.setActivatedMail(true);
-        //save user and delete confirmation token
-    	userRepository.save(user);
-        confirmationTokenRepository.deleteByTokenid(token.getTokenid());
-		
-        return true;
     }
 	
 }

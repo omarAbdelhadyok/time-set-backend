@@ -22,9 +22,13 @@ import com.omar.time.service.CommentService;
 @RequestMapping("/api/comments")
 public class CommentController {
 
-	@Autowired
 	private CommentService commentService;
 	
+	
+	@Autowired
+	public CommentController(CommentService commentService) {
+		this.commentService = commentService;
+	}
 	
 	@PostMapping("/{projectId}/{stackId}/{cardId}")
 	public Comment create(@CurrentUser UserPrincipal userPrincipal,

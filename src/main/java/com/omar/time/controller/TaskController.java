@@ -24,9 +24,13 @@ import com.omar.time.service.TaskService;
 @RequestMapping("/api/tasks")
 public class TaskController {
 
-	@Autowired
 	private TaskService taskService;
 	
+	
+	@Autowired
+	public TaskController(TaskService taskService) {
+		this.taskService = taskService;
+	}
 	
 	@PostMapping("/{projectId}/{stackId}/{cardId}")
 	public Task create(@CurrentUser UserPrincipal userPrincipal,

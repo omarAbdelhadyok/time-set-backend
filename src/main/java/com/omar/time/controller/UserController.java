@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.omar.time.dto.user.UserDTO;
@@ -21,11 +22,15 @@ import com.omar.time.service.UserService;
 @RequestMapping("/api/users")
 public class UserController {
 	
-	@Autowired
 	private RoleRepository roleRepository;
+	private UserService userService;
+	
 	
 	@Autowired
-	private UserService userService;
+	public UserController(RoleRepository roleRepository, UserService userService) {
+		this.roleRepository = roleRepository;
+		this.userService = userService;
+	}
 	
 	@GetMapping
 	public UserDTO get(@CurrentUser UserPrincipal userPrincipal) {
@@ -41,6 +46,11 @@ public class UserController {
 	public Role createRole(@RequestBody Role role) {
 		return roleRepository.save(role);
 	}
+	
+	@GetMapping("/confirm-account")
+    public boolean confirmUserAccount(@RequestParam("token") String confirmationToken) {
+    	return this.userService.confirmUserAccount(confirmationToken);
+    }
 
 	@GetMapping("/resend-confirmation")
     public boolean resendConfirmation(@CurrentUser UserPrincipal userPrincipal) {

@@ -8,6 +8,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.omar.time.dto.user.UserDTO;
 import com.omar.time.exception.BadRequestException;
@@ -82,5 +83,24 @@ public class UserService {
 		
 		return true;
 	}
+	
+	@Transactional
+    public boolean confirmUserAccount(String confirmationToken) {
+		//check if the confirmation token and user exist
+        ConfirmationToken token = confirmationTokenRepository.findByConfirmationToken(confirmationToken).orElseThrow(
+    		() -> new RuntimeException("Something went wrong")
+		);
+        User user = userRepository.findByEmail(token.getUser().getEmail()).orElseThrow(
+    		() -> new EntityNotFoundException("errors.app.user.notFound")
+        );
+        
+        //set user activatedMail to true
+        user.setActivatedMail(true);
+        //save user and delete confirmation token
+    	userRepository.save(user);
+        confirmationTokenRepository.deleteByTokenid(token.getTokenid());
+		
+        return true;
+    }
 	
 }

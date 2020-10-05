@@ -70,7 +70,7 @@ public class Project extends UserDateAudit {
 		this.editors.add(author);
 	}
 	
-	public boolean deleteAuthor(User author) {
+	public boolean deleteEditor(User author) {
 		boolean deleted = false;
 		for(int index = 0; index < this.getEditors().size(); index++) {
 			if(this.getEditors().get(index).getId() == author.getId()) {

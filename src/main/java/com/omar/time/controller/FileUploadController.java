@@ -12,9 +12,13 @@ import com.omar.time.service.FilesService;
 @RequestMapping("/api/files")
 public class FileUploadController {
 
-	
-    @Autowired
     private FilesService filesService;
+    
+    
+    @Autowired
+    public FileUploadController(FilesService filesService) {
+		this.filesService = filesService;
+	}
 
     @RequestMapping("/upload")
     public String uploadImage(@RequestParam("file") MultipartFile file) {

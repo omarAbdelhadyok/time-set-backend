@@ -21,9 +21,13 @@ import com.omar.time.service.StackService;
 @RequestMapping("/api/stacks")
 public class StackController {
 
-	@Autowired
 	private StackService stackService;
 	
+	
+	@Autowired
+	public StackController(StackService stackService) {
+		this.stackService = stackService;
+	}
 	
 	@PostMapping("/{projectId}")
 	public StackDTO create(@CurrentUser UserPrincipal userPrincipal,

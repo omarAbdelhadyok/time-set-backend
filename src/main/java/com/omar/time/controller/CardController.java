@@ -24,9 +24,13 @@ import com.omar.time.service.CardService;
 @RequestMapping("/api/cards")
 public class CardController {
 
-	@Autowired
 	private CardService cardService;
 	
+	
+	@Autowired
+	public CardController(CardService cardService) {
+		this.cardService = cardService;
+	}
 	
 	@GetMapping("/{projectId}/{stackId}/{cardId}")
 	public CardByIdDTO get(@CurrentUser UserPrincipal userPrincipal,

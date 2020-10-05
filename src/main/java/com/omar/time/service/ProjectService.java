@@ -51,15 +51,15 @@ public class ProjectService {
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
 	}
 	
-	public ProjectDTO addAuthor(UserPrincipal userPrincipal, long projectId, long authorId) {
+	public boolean addEditor(UserPrincipal userPrincipal, long projectId, long editorId) {
 		//throw error if the author id is the same as the user id (owner) 
-		if(userPrincipal.getId() == authorId) {
+		if(userPrincipal.getId() == editorId) {
 			throw new BadRequestException("errors.app.project.alreadyOwner");
 		}
 		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
 		);
-		User user = userRepository.findById(authorId).orElseThrow(() -> 
+		User user = userRepository.findById(editorId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.user.notFound")
 		);
 
@@ -73,13 +73,13 @@ public class ProjectService {
 		
 		//check if authorId already exist in authors list of this project
 		for(User author: project.getEditors()) {
-			if(author.getId() == authorId) {
+			if(author.getId() == editorId) {
 				throw new BadRequestException("errors.app.project.alreadyEditor");
 			}
 		}
 		project.addAuthor(user);
 		project = projectRepository.save(project);
-		return ObjectMapperUtils.map(project, ProjectDTO.class);
+		return true;
 	}
 	
 	public ProjectDTO create(ProjectDTO projectDTO) {
@@ -140,17 +140,17 @@ public class ProjectService {
 		);
     	
 		UtilService.handleUnathorized(project, userPrincipal);		
-		project.deleteAuthor(user);
+		project.deleteEditor(user);
 		projectRepository.save(project);
 		
     	return true;
     }
     
-    public boolean deleteAuthorFromProject(UserPrincipal userPrincipal, long projectId, long userId) {
+    public boolean deleteEditorFromProject(UserPrincipal userPrincipal, long projectId, long editorId) {
     	Project project = projectRepository.findById(projectId).orElseThrow(() ->
     		new EntityNotFoundException("errors.app.project.notFound")
 		);
-    	User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> 
+    	User editor = userRepository.findById(editorId).orElseThrow(() -> 
     		new EntityNotFoundException("errors.app.user.notFound")
 		);
     	
@@ -160,7 +160,7 @@ public class ProjectService {
 		if(project.getCreatedBy() != userPrincipal.getId()) {
 			throw new AccessDeniedException("errors.app.project.notOwner");
 		}
-		project.deleteAuthor(user);	
+		project.deleteEditor(editor);	
 		projectRepository.save(project);
  		
      	return true;

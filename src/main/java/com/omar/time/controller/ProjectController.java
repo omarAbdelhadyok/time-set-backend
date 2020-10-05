@@ -27,9 +27,13 @@ import com.omar.time.service.ProjectService;
 @RequestMapping("/api/projects")
 public class ProjectController {
 
-	@Autowired
 	private ProjectService projectService;
 	
+	
+	@Autowired
+	public ProjectController(ProjectService projectService) {
+		this.projectService = projectService;
+	}
 	
 	@GetMapping
 	public Page<AllProjectsDTO> getAll(@CurrentUser UserPrincipal userPrincipal, Pageable pageable) {
@@ -41,11 +45,11 @@ public class ProjectController {
 		return projectService.get(userPrincipal, id);
 	}
 	
-	@GetMapping("/{id}/addAuthor/{authorId}")
-	public ProjectDTO addAuthor(@CurrentUser UserPrincipal userPrincipal,
+	@GetMapping("/{id}/addEditor/{editorId}")
+	public boolean addEditor(@CurrentUser UserPrincipal userPrincipal,
 			@PathVariable long id,
-			@PathVariable long authorId) {
-		return projectService.addAuthor(userPrincipal, id, authorId);
+			@PathVariable long editorId) {
+		return projectService.addEditor(userPrincipal, id, editorId);
 	}
 	
 	@PostMapping
@@ -78,10 +82,10 @@ public class ProjectController {
 		return projectService.deleteAuthorityFromProject(userPrincipal, projectId);
 	}
 	
-	@DeleteMapping("/deleteAuthor/{projectId}/{userId}")
-	public boolean deleteAuthorFromProject(@CurrentUser UserPrincipal userPrincipal,
+	@DeleteMapping("/deleteAuthor/{projectId}/{editorId}")
+	public boolean deleteEditorFromProject(@CurrentUser UserPrincipal userPrincipal,
 			@PathVariable long projectId,
-			@PathVariable long userId) {
-		return projectService.deleteAuthorFromProject(userPrincipal, projectId, userId);
+			@PathVariable long editorId) {
+		return projectService.deleteEditorFromProject(userPrincipal, projectId, editorId);
 	}
 }
