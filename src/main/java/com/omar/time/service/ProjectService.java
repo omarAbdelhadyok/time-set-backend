@@ -37,7 +37,7 @@ public class ProjectService {
 	public Page<AllProjectsDTO> getAll(UserPrincipal userPrincipal, Pageable pageable) {
 		User user = ObjectMapperUtils.map(userPrincipal, User.class);
 		
-		Page<Project> page = projectRepository.findByCreatedByOrAuthors(userPrincipal.getId(), user, pageable); 
+		Page<Project> page = projectRepository.findByCreatedByOrEditors(userPrincipal.getId(), user, pageable); 
 		return new PageImpl<AllProjectsDTO>(ObjectMapperUtils.mapAll(
 				page.getContent(), AllProjectsDTO.class), pageable, page.getTotalElements());
 	}

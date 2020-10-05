@@ -12,6 +12,6 @@ import com.omar.time.model.User;
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     Page<Project> findByCreatedBy(long userId, Pageable pageable);
-    Page<Project> findByCreatedByOrAuthors(long userId, User author, Pageable pageable);
+    Page<Project> findByCreatedByOrEditors(long userId, User author, Pageable pageable);
 	
 }
