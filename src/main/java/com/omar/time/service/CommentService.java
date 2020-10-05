@@ -4,6 +4,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.omar.time.dto.comment.CommentDTO;
 import com.omar.time.model.Card;
@@ -42,6 +43,7 @@ public class CommentService {
 		return commentRepository.save(comment);
     }
 	
+	@Transactional
 	public Comment update(UserPrincipal userPrincipal, CommentDTO commentDTO, long projectId, long stackId, long cardId, long commentId) {
 		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")

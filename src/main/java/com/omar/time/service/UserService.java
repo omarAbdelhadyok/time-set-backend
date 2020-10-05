@@ -52,6 +52,7 @@ public class UserService {
 		return ObjectMapperUtils.mapAll(result, UserDTO.class);
 	}
 	
+	@Transactional
 	public boolean resendConfirmation(UserPrincipal userPrincipal) {
 		
 		User user = ObjectMapperUtils.map(userPrincipal, User.class);

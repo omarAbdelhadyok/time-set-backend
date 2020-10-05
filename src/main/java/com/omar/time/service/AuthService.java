@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.omar.time.dto.auth.LoginRequestDTO;
 import com.omar.time.dto.auth.SignupRequestDTO;
@@ -71,6 +72,7 @@ public class AuthService {
         return ResponseEntity.ok(new JwtAuthDto(jwt));
 	}
 	
+	@Transactional
 	public ResponseEntity<?> signUp(SignupRequestDTO signupRequestDTO) {
 		//make sure user name and email are unique
         if(userRepository.existsByUsername(signupRequestDTO.getUsername())) {

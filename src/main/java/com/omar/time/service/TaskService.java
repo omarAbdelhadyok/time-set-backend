@@ -4,6 +4,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.omar.time.dto.task.TaskDTO;
 import com.omar.time.exception.BadRequestException;
@@ -45,6 +46,7 @@ public class TaskService {
 		return taskRepository.save(task);
     }
 	
+	@Transactional
 	public Task update(UserPrincipal userPrincipal, TaskDTO taskDTO, long projectId, long stackId, long cardId, long taskId) {
 		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
@@ -64,7 +66,7 @@ public class TaskService {
         return taskRepository.save(task);
     }
 	
-	
+	@Transactional
 	public Task updateStatus(UserPrincipal userPrincipal, TaskDTO taskDTO, long projectId, long stackId, long cardId, long taskId) {
 		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")

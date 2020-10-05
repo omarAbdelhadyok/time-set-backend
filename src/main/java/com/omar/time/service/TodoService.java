@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.omar.time.dto.todo.TodoDto;
 import com.omar.time.exception.BadRequestException;
@@ -49,6 +50,7 @@ public class TodoService {
 		return ObjectMapperUtils.map(todo, TodoDto.class);
     }
 	
+	@Transactional
 	public TodoDto update(UserPrincipal userPrincipal, long id, TodoDto todoDto) {
 		Todo todo = todoRepository.findByIdAndCreatedBy(id, userPrincipal.getId()).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.todo.notFound")

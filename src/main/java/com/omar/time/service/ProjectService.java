@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.omar.time.dto.project.AllProjectsDTO;
 import com.omar.time.dto.project.ProjectDTO;
@@ -51,6 +52,7 @@ public class ProjectService {
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
 	}
 	
+	@Transactional
 	public boolean addEditor(UserPrincipal userPrincipal, long projectId, long editorId) {
 		//throw error if the author id is the same as the user id (owner) 
 		if(userPrincipal.getId() == editorId) {
@@ -89,6 +91,7 @@ public class ProjectService {
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
     }
 	
+	@Transactional
 	public ProjectDTO update(UserPrincipal userPrincipal, ProjectDTO projectDTO, long projectId) {
 		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
@@ -107,6 +110,7 @@ public class ProjectService {
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
     }
 	
+	@Transactional
 	public ProjectDTO updateStatus(UserPrincipal userPrincipal, ProjectDTO projectDTO, long projectId) {
 		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
@@ -131,6 +135,7 @@ public class ProjectService {
 		return true;
     }
     
+    @Transactional
     public boolean deleteAuthorityFromProject(UserPrincipal userPrincipal, long projectId) {
     	Project project = projectRepository.findById(projectId).orElseThrow(() -> 
     		new EntityNotFoundException("errors.app.project.notFound")
@@ -146,6 +151,7 @@ public class ProjectService {
     	return true;
     }
     
+    @Transactional
     public boolean deleteEditorFromProject(UserPrincipal userPrincipal, long projectId, long editorId) {
     	Project project = projectRepository.findById(projectId).orElseThrow(() ->
     		new EntityNotFoundException("errors.app.project.notFound")

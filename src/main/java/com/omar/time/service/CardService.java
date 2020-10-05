@@ -4,6 +4,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.omar.time.dto.card.CardByIdDTO;
 import com.omar.time.dto.card.CardDTO;
@@ -53,6 +54,7 @@ public class CardService {
 		return cardRepository.save(card);
     }
 	
+	@Transactional
 	public Card update(UserPrincipal userPrincipal, CardDTO cardDTO, long projectId, long stackId, long cardId) {
 		Project project = projectRepository.findById(projectId).orElseThrow(() ->
 			new EntityNotFoundException("errors.app.project.notFound")
