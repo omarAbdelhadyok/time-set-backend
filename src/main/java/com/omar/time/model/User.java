@@ -1,6 +1,8 @@
 package com.omar.time.model;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -74,6 +76,12 @@ public class User extends DateAudit {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+    
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Project.class)
+    @JoinTable(name = "project_editors",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "project_id"))
+	private List<User> projects = new LinkedList<>();
     
     @NotNull
     private boolean isActivatedMail;

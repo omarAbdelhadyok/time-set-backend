@@ -23,10 +23,11 @@ public abstract class UserDateAudit extends DateAudit {
 	private static final long serialVersionUID = -8302738905364683701L;
 
 	@CreatedBy
-    @Column(updatable = false)
+    @Column(nullable = false, updatable = false)
     private Long createdBy;
 
     @LastModifiedBy
+    @Column(nullable = false)
     private Long updatedBy;
 
 }

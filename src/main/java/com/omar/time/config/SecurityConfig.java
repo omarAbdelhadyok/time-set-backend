@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.omar.time.security.CustomUserDetailsService;
 import com.omar.time.security.JwtAuthenticationEntryPoint;
 import com.omar.time.security.JwtAuthenticationFilter;
+import com.omar.time.security.RestAccessDeniedHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -38,14 +39,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	        "/webjars/**"
 	};
 	
-    @Autowired
     private CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
     private JwtAuthenticationEntryPoint unauthorizedHandler;
+    private RestAccessDeniedHandler accessDeniedHandler;
 
-   
-
+    
+    @Autowired
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService,
+    		JwtAuthenticationEntryPoint unauthorizedHandler,
+    		RestAccessDeniedHandler accessDeniedHandler) {
+		this.customUserDetailsService = customUserDetailsService;
+		this.unauthorizedHandler = unauthorizedHandler;
+		this.accessDeniedHandler = accessDeniedHandler;
+	}
     
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -62,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf()
                 .disable()
             .exceptionHandling()
+            	.accessDeniedHandler(accessDeniedHandler)
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
             .sessionManagement()
