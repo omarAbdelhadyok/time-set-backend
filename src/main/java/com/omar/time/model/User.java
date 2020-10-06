@@ -85,6 +85,9 @@ public class User extends DateAudit {
     
     @NotNull
     private boolean isActivatedMail;
+    
+    @NotNull
+    private boolean deleted;
 
 	public User(String firstName, String lastName, String username, String mobile, String email, String password) {
 		this.firstName = firstName;
