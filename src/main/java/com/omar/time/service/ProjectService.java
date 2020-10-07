@@ -54,16 +54,18 @@ public class ProjectService {
 	
 	@Transactional
 	public boolean addEditor(UserPrincipal userPrincipal, long projectId, long editorId) {
-		//throw error if the author id is the same as the user id (owner) 
-		if(userPrincipal.getId() == editorId) {
-			throw new BadRequestException("errors.app.project.alreadyOwner");
-		}
+		
 		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
 		);
 		User user = userRepository.findById(editorId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.user.notFound")
 		);
+		
+		//throw error if the author id is the same as the user id (owner) 
+		if((userPrincipal.getId() == editorId) && (userPrincipal.getId() == project.getCreatedBy())) {
+			throw new BadRequestException("errors.app.project.alreadyOwner");
+		}
 
 		//throw not found exception if user is not project owner nor he's an author
 		UtilService.handleUnathorized(project, userPrincipal);
@@ -100,6 +102,11 @@ public class ProjectService {
 		UtilService.handleUnathorized(project, userPrincipal);
 		ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
 		
+		//throw access denied exception if user is not the owner of this project
+		if(project.getCreatedBy() != userPrincipal.getId()) {
+			throw new AccessDeniedException("errors.app.project.notOwner");
+		}
+		
 		//check if project is not active so it cannot be updated
 		if(project.getStatus() != StatusName.ACTIVE) {
 			throw new BadRequestException("errors.app.project.cancelledClosedNotUpdatable");
@@ -128,6 +135,11 @@ public class ProjectService {
         Project project = projectRepository.findById(id).orElseThrow(() -> 
         	new EntityNotFoundException("errors.app.project.notFound")
 		);
+        
+        //throw access denied exception if user is not the owner of this project
+  		if(project.getCreatedBy() != userPrincipal.getId()) {
+  			throw new AccessDeniedException("errors.app.project.notOwner");
+  		}
 		
 		UtilService.handleUnathorized(project, userPrincipal);
         projectRepository.deleteById(id);

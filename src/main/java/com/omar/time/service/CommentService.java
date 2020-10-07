@@ -52,8 +52,8 @@ public class CommentService {
 		UtilService.handleUnathorized(project, userPrincipal);
 		Stack stack = UtilService.getStackFromProject(project, stackId);
 		Card card = UtilService.getCardFromStack(stack, cardId);
-		UtilService.getCommentFromCard(card, commentId);
-		Comment comment = ObjectMapperUtils.map(commentDTO, Comment.class);
+		Comment comment = UtilService.getCommentFromCard(card, commentId);
+		ObjectMapperUtils.copyPropertiesForUpdate(commentDTO, comment);
 		comment.setId(commentId);	
 		comment.setCard(card);
 		

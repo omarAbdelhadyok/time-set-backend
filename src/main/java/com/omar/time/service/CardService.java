@@ -62,8 +62,8 @@ public class CardService {
 		
 		UtilService.handleUnathorized(project, userPrincipal);
 		Stack stack = UtilService.getStackFromProject(project, stackId);
-		UtilService.getCardFromStack(stack, cardId);
-		Card card = ObjectMapperUtils.map(cardDTO, Card.class);
+		Card card = UtilService.getCardFromStack(stack, cardId);
+		ObjectMapperUtils.copyPropertiesForUpdate(cardDTO, card);
 		card.setId(cardId);
 		card.setStack(stack);
 		

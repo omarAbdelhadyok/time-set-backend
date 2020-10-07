@@ -55,8 +55,8 @@ public class TaskService {
 		UtilService.handleUnathorized(project, userPrincipal);
 		Stack stack = UtilService.getStackFromProject(project, stackId);
 		Card card = UtilService.getCardFromStack(stack, cardId);
-		UtilService.getTaskFromCard(card, taskId);	
-		Task task = ObjectMapperUtils.map(taskDTO, Task.class);
+		Task task = UtilService.getTaskFromCard(card, taskId);	
+		ObjectMapperUtils.copyPropertiesForUpdate(taskDTO, task);
 		if(task.getStatus() != StatusName.ACTIVE) {
 			throw new BadRequestException("errors.app.task.cancelledClosedNotUpdatable");
 		}
@@ -75,8 +75,8 @@ public class TaskService {
 		UtilService.handleUnathorized(project, userPrincipal);
 		Stack stack = UtilService.getStackFromProject(project, stackId);
 		Card card = UtilService.getCardFromStack(stack, cardId);
-		UtilService.getTaskFromCard(card, taskId);
-		Task task = ObjectMapperUtils.map(taskDTO, Task.class);
+		Task task = UtilService.getTaskFromCard(card, taskId);
+		ObjectMapperUtils.copyPropertiesForUpdate(taskDTO, task);
 		task.setId(taskId);	
 		task.setCard(card);
 		

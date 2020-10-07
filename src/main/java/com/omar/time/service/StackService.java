@@ -47,8 +47,8 @@ public class StackService {
 		);
 		
 		UtilService.handleUnathorized(project, userPrincipal);
-		UtilService.getStackFromProject(project, stackId);
-		Stack stack = ObjectMapperUtils.map(stackDTO, Stack.class);
+		Stack stack = UtilService.getStackFromProject(project, stackId);
+		ObjectMapperUtils.copyPropertiesForUpdate(stackDTO, stack);
 		stack.setId(stackId);
 		stack.setProject(project);
 		stack = stackRepository.save(stack);

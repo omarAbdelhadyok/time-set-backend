@@ -82,7 +82,7 @@ public class ProjectController {
 		return projectService.deleteAuthorityFromProject(userPrincipal, projectId);
 	}
 	
-	@DeleteMapping("/deleteAuthor/{projectId}/{editorId}")
+	@DeleteMapping("/deleteEditor/{projectId}/{editorId}")
 	public boolean deleteEditorFromProject(@CurrentUser UserPrincipal userPrincipal,
 			@PathVariable long projectId,
 			@PathVariable long editorId) {
