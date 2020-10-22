@@ -35,39 +35,25 @@ public class TaskController {
 	@PostMapping("/{projectId}/{stackId}/{cardId}")
 	public Task create(@CurrentUser UserPrincipal userPrincipal,
 			@Validated(Create.class) @RequestBody TaskDTO taskDTO,
-			@PathVariable long projectId,
-			@PathVariable long stackId,
 			@PathVariable long cardId) {
-		return taskService.create(userPrincipal, taskDTO, projectId, stackId, cardId);
+		return taskService.create(userPrincipal, taskDTO, cardId);
 	}
 	
 	@PutMapping("/{projectId}/{stackId}/{cardId}/{taskId}")
 	public Task update(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(Update.class) @RequestBody TaskDTO taskDTO,
-			@PathVariable long projectId,
-			@PathVariable long stackId,
-			@PathVariable long cardId,
-			@PathVariable long taskId) {
-		return taskService.update(userPrincipal, taskDTO, projectId, stackId, cardId, taskId);
+			@Validated(Update.class) @RequestBody TaskDTO taskDTO) {
+		return taskService.update(userPrincipal, taskDTO);
 	}
 	
 	@PatchMapping("/{projectId}/{stackId}/{cardId}/{taskId}")
 	public Task updateStatus(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(UpdateStatus.class) @RequestBody TaskDTO taskDTO,
-			@PathVariable long projectId,
-			@PathVariable long stackId,
-			@PathVariable long cardId,
-			@PathVariable long taskId) {
-		return taskService.updateStatus(userPrincipal, taskDTO, projectId, stackId, cardId, taskId);
+			@Validated(UpdateStatus.class) @RequestBody TaskDTO taskDTO) {
+		return taskService.updateStatus(userPrincipal, taskDTO);
 	}
 	
 	@DeleteMapping("/{projectId}/{stackId}/{cardId}/{taskId}")
-	public boolean delete(@CurrentUser UserPrincipal userPrincipal,
-			@PathVariable long projectId,
-			@PathVariable long stackId,
-			@PathVariable long cardId,
-			@PathVariable long taskId) {
-		return taskService.delete(userPrincipal, projectId, stackId, cardId, taskId);
+	public boolean delete(@CurrentUser UserPrincipal userPrincipal, @PathVariable long taskId) {
+		return taskService.delete(userPrincipal, taskId);
 	}
 	
 }

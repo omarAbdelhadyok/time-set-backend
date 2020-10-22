@@ -43,36 +43,27 @@ public class ProjectService {
 	}
 	
 	public ProjectDTO get(UserPrincipal userPrincipal, long projectId) {
-		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+		User user = ObjectMapperUtils.map(userPrincipal, User.class);
+		
+		Project project = projectRepository.findByIdAndCreatedByOrEditors(projectId, userPrincipal.getId(), user).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
 		);
-
-		UtilService.handleUnathorized(project, userPrincipal);
 
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
 	}
 	
 	@Transactional
 	public boolean addEditor(UserPrincipal userPrincipal, long projectId, long editorId) {
-		
-		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+		Project project = projectRepository.findByIdAndCreatedBy(projectId, userPrincipal.getId()).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
 		);
 		User user = userRepository.findById(editorId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.user.notFound")
 		);
 		
-		//throw error if the author id is the same as the user id (owner) 
-		if((userPrincipal.getId() == editorId) && (userPrincipal.getId() == project.getCreatedBy())) {
+		//throw error if the editor id is the same as owner id 
+		if(userPrincipal.getId() == editorId) {
 			throw new BadRequestException("errors.app.project.alreadyOwner");
-		}
-
-		//throw not found exception if user is not project owner nor he's an author
-		UtilService.handleUnathorized(project, userPrincipal);
-		
-		//throw access denied exception if user is not the owner of this project
-		if(project.getCreatedBy() != userPrincipal.getId()) {
-			throw new AccessDeniedException("errors.app.project.notOwner");
 		}
 		
 		//check if authorId already exist in authors list of this project
@@ -81,6 +72,7 @@ public class ProjectService {
 				throw new BadRequestException("errors.app.project.alreadyEditor");
 			}
 		}
+		
 		project.addAuthor(user);
 		project = projectRepository.save(project);
 		return true;
@@ -94,69 +86,59 @@ public class ProjectService {
     }
 	
 	@Transactional
-	public ProjectDTO update(UserPrincipal userPrincipal, ProjectDTO projectDTO, long projectId) {
-		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+	public ProjectDTO update(UserPrincipal userPrincipal, ProjectDTO projectDTO) {
+		Project project = projectRepository.findByIdAndCreatedBy(projectDTO.getId(), userPrincipal.getId()).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
 		);
 		
-		UtilService.handleUnathorized(project, userPrincipal);
 		ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
-		
-		//throw access denied exception if user is not the owner of this project
-		if(project.getCreatedBy() != userPrincipal.getId()) {
-			throw new AccessDeniedException("errors.app.project.notOwner");
-		}
 		
 		//check if project is not active so it cannot be updated
 		if(project.getStatus() != StatusName.ACTIVE) {
 			throw new BadRequestException("errors.app.project.cancelledClosedNotUpdatable");
 		}
-		project.setId(projectId);
+		
 		project = projectRepository.save(project);
 		
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
     }
 	
 	@Transactional
-	public ProjectDTO updateStatus(UserPrincipal userPrincipal, ProjectDTO projectDTO, long projectId) {
-		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+	public ProjectDTO updateStatus(UserPrincipal userPrincipal, ProjectDTO projectDTO) {
+		Project project = projectRepository.findByIdAndCreatedBy(projectDTO.getId(), userPrincipal.getId()).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
 		);
 		
-		UtilService.handleUnathorized(project, userPrincipal);
 		ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
-		project.setId(projectId);	
 		project = projectRepository.save(project);
 		
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
 	}
 
-    public boolean delete(UserPrincipal userPrincipal, long id) {
-        Project project = projectRepository.findById(id).orElseThrow(() -> 
+    public boolean delete(UserPrincipal userPrincipal, long projectId) {
+        Project project = projectRepository.findByIdAndCreatedBy(projectId, userPrincipal.getId()).orElseThrow(() -> 
         	new EntityNotFoundException("errors.app.project.notFound")
 		);
-        
-        //throw access denied exception if user is not the owner of this project
-  		if(project.getCreatedBy() != userPrincipal.getId()) {
-  			throw new AccessDeniedException("errors.app.project.notOwner");
-  		}
 		
-		UtilService.handleUnathorized(project, userPrincipal);
-        projectRepository.deleteById(id);
-        
+        projectRepository.delete(project);
 		return true;
     }
     
     @Transactional
     public boolean deleteAuthorityFromProject(UserPrincipal userPrincipal, long projectId) {
-    	Project project = projectRepository.findById(projectId).orElseThrow(() -> 
+    	User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.user.notFound")
+		);
+    	Project project = projectRepository.findByIdAndCreatedByOrEditors(projectId, userPrincipal.getId(), user)
+		.orElseThrow(() -> 
     		new EntityNotFoundException("errors.app.project.notFound")
 		);
-    	User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> 
-    		new EntityNotFoundException("errors.app.user.notFound")
-		);
     	
-		UtilService.handleUnathorized(project, userPrincipal);		
+		//check if user is owner
+    	if(project.getCreatedBy() == user.getId()) {
+    		throw new BadRequestException("errors.app.project.cannotTakeAction");
+    	}
+    	
 		project.deleteEditor(user);
 		projectRepository.save(project);
 		
@@ -165,14 +147,13 @@ public class ProjectService {
     
     @Transactional
     public boolean deleteEditorFromProject(UserPrincipal userPrincipal, long projectId, long editorId) {
-    	Project project = projectRepository.findById(projectId).orElseThrow(() ->
-    		new EntityNotFoundException("errors.app.project.notFound")
-		);
     	User editor = userRepository.findById(editorId).orElseThrow(() -> 
     		new EntityNotFoundException("errors.app.user.notFound")
 		);
-    	
-		UtilService.handleUnathorized(project, userPrincipal);
+    	Project project = projectRepository.findByIdAndCreatedByOrEditors(projectId, userPrincipal.getId(), editor)
+		.orElseThrow(() ->
+    		new EntityNotFoundException("errors.app.project.notFound")
+		);
 		
 		//throw access denied exception if user is not the owner of this project
 		if(project.getCreatedBy() != userPrincipal.getId()) {

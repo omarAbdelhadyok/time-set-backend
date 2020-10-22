@@ -15,7 +15,6 @@ import com.omar.time.dto.Create;
 import com.omar.time.dto.Update;
 import com.omar.time.dto.card.CardByIdDTO;
 import com.omar.time.dto.card.CardDTO;
-import com.omar.time.model.Card;
 import com.omar.time.security.CurrentUser;
 import com.omar.time.security.UserPrincipal;
 import com.omar.time.service.CardService;
@@ -32,37 +31,27 @@ public class CardController {
 		this.cardService = cardService;
 	}
 	
-	@GetMapping("/{projectId}/{stackId}/{cardId}")
-	public CardByIdDTO get(@CurrentUser UserPrincipal userPrincipal,
-			@PathVariable long projectId,
-			@PathVariable long stackId,
-			@PathVariable long cardId) {
-		return cardService.get(userPrincipal, projectId, stackId, cardId);
+	@GetMapping("/{cardId}")
+	public CardByIdDTO get(@CurrentUser UserPrincipal userPrincipal, @PathVariable long cardId) {
+		return cardService.get(userPrincipal, cardId);
 	}
 	
-	@PostMapping("/{projectId}/{stackId}")
-	public Card create(@CurrentUser UserPrincipal userPrincipal,
+	@PostMapping("/{stackId}")
+	public CardDTO create(@CurrentUser UserPrincipal userPrincipal,
 			@Validated(Create.class) @RequestBody CardDTO cardDTO,
-			@PathVariable long projectId,
 			@PathVariable long stackId) {
-		return cardService.create(userPrincipal, cardDTO, projectId, stackId);
+		return cardService.create(userPrincipal, cardDTO, stackId);
 	}
 	
-	@PutMapping("/{projectId}/{stackId}/{cardId}")
-	public Card update(@CurrentUser UserPrincipal userPrincipal, 
-			@Validated(Update.class) @RequestBody CardDTO cardDTO, 
-			@PathVariable long projectId,
-			@PathVariable long stackId,
-			@PathVariable long cardId) {
-		return cardService.update(userPrincipal, cardDTO, projectId, stackId, cardId);
+	@PutMapping
+	public CardDTO update(@CurrentUser UserPrincipal userPrincipal, 
+			@Validated(Update.class) @RequestBody CardDTO cardDTO) {
+		return cardService.update(userPrincipal, cardDTO);
 	}
 	
 	@DeleteMapping("/{projectId}/{stackId}/{cardId}")
-	public boolean delete(@CurrentUser UserPrincipal userPrincipal,
-			@PathVariable long projectId,
-			@PathVariable long stackId,
-			@PathVariable long cardId) {
-		return cardService.delete(userPrincipal, projectId, stackId, cardId);
+	public boolean delete(@CurrentUser UserPrincipal userPrincipal, @PathVariable long cardId) {
+		return cardService.delete(userPrincipal, cardId);
 	}
 	
 }

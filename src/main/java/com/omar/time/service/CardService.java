@@ -9,10 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.omar.time.dto.card.CardByIdDTO;
 import com.omar.time.dto.card.CardDTO;
 import com.omar.time.model.Card;
-import com.omar.time.model.Project;
 import com.omar.time.model.Stack;
 import com.omar.time.repository.CardRepository;
-import com.omar.time.repository.ProjectRepository;
+import com.omar.time.repository.StackRepository;
 import com.omar.time.security.UserPrincipal;
 import com.omar.time.util.ObjectMapperUtils;
 
@@ -20,64 +19,51 @@ import com.omar.time.util.ObjectMapperUtils;
 public class CardService {
 
 	private CardRepository cardRepository;
-	private ProjectRepository projectRepository;
+	private StackRepository stackRepository;
 
 	@Autowired
-	public CardService(CardRepository cardRepository, ProjectRepository projectRepository) {
+	public CardService(CardRepository cardRepository, StackRepository stackRepository) {
 		this.cardRepository = cardRepository;
-		this.projectRepository = projectRepository;
+		this.stackRepository = stackRepository;
 	}
 	
-	
-	public CardByIdDTO get(UserPrincipal userPrincipal, long projectId, long stackId, long cardId) {
-		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
-			new EntityNotFoundException("errors.app.project.notFound")
+	public CardByIdDTO get(UserPrincipal userPrincipal, long id) {
+		Card card = cardRepository.findCard(userPrincipal.getId(), id).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.card.notFound")
 		);
-		
-		UtilService.handleUnathorized(project, userPrincipal);
-		Stack stack = UtilService.getStackFromProject(project, stackId);
-		Card card = UtilService.getCardFromStack(stack, cardId);
 		
 		return ObjectMapperUtils.map(card, CardByIdDTO.class);
 	}
 	
-	public Card create(UserPrincipal userPrincipal, CardDTO cardDTO, long projectId, long stackId) {
-		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
-			new EntityNotFoundException("errors.app.project.notFound")
+	public CardDTO create(UserPrincipal userPrincipal, CardDTO cardDTO, long stackId) {		
+		Stack stack = stackRepository.findStack(userPrincipal.getId(), stackId).orElseThrow(() ->
+			new EntityNotFoundException("errors.app.stack.notFound")
 		);
 		
-		UtilService.handleUnathorized(project, userPrincipal);
-		Stack stack = UtilService.getStackFromProject(project, stackId);
 		Card card = ObjectMapperUtils.map(cardDTO, Card.class);
 		card.setStack(stack);
-        
-		return cardRepository.save(card);
+		card = cardRepository.save(card);
+		
+		return ObjectMapperUtils.map(card, CardDTO.class);
     }
 	
 	@Transactional
-	public Card update(UserPrincipal userPrincipal, CardDTO cardDTO, long projectId, long stackId, long cardId) {
-		Project project = projectRepository.findById(projectId).orElseThrow(() ->
-			new EntityNotFoundException("errors.app.project.notFound")
+	public CardDTO update(UserPrincipal userPrincipal, CardDTO cardDTO) {
+		Card card = cardRepository.findCard(userPrincipal.getId(), cardDTO.getId()).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.card.notFound")
 		);
 		
-		UtilService.handleUnathorized(project, userPrincipal);
-		Stack stack = UtilService.getStackFromProject(project, stackId);
-		Card card = UtilService.getCardFromStack(stack, cardId);
 		ObjectMapperUtils.copyPropertiesForUpdate(cardDTO, card);
-		card.setId(cardId);
-		card.setStack(stack);
+		card = cardRepository.save(card);
 		
-		return cardRepository.save(card);
+		return ObjectMapperUtils.map(card, CardDTO.class);
     }
 		
-	public boolean delete(UserPrincipal userPrincipal, long projectId, long stackId, long cardId) {
-		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
-			new EntityNotFoundException("errors.app.project.notFound")
+	public boolean delete(UserPrincipal userPrincipal, long cardId) {
+		Card card = cardRepository.findCard(userPrincipal.getId(), cardId).orElseThrow(() -> 
+			new EntityNotFoundException("errors.app.card.notFound")
 		);
-	
-		UtilService.handleUnathorized(project, userPrincipal);
-		Stack stack = UtilService.getStackFromProject(project, stackId);
-		Card card = UtilService.getCardFromStack(stack, cardId);
+		
 		card.dismissStack();
 		cardRepository.deleteById(cardId);
 		

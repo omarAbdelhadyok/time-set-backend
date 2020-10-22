@@ -57,18 +57,16 @@ public class ProjectController {
 		return projectService.create(projectDTO);
 	}
 	
-	@PutMapping("/{id}")
+	@PutMapping
 	public ProjectDTO update(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(Update.class) @RequestBody ProjectDTO projectDTO,
-			@PathVariable long id) {
-		return projectService.update(userPrincipal, projectDTO, id);
+			@Validated(Update.class) @RequestBody ProjectDTO projectDTO) {
+		return projectService.update(userPrincipal, projectDTO);
 	}
 	
-	@PatchMapping("/{id}")
+	@PatchMapping
 	public ProjectDTO updateStatus(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(UpdateStatus.class) @RequestBody ProjectDTO projectDTO,
-			@PathVariable long id) {
-		return projectService.updateStatus(userPrincipal, projectDTO, id);
+			@Validated(UpdateStatus.class) @RequestBody ProjectDTO projectDTO) {
+		return projectService.updateStatus(userPrincipal, projectDTO);
 	}
 	
 	@DeleteMapping("/{id}")

@@ -33,29 +33,19 @@ public class CommentController {
 	@PostMapping("/{projectId}/{stackId}/{cardId}")
 	public Comment create(@CurrentUser UserPrincipal userPrincipal,
 			@Validated(Create.class) @RequestBody CommentDTO commentDTO,
-			@PathVariable long projectId,
-			@PathVariable long stackId,
 			@PathVariable long cardId) {
-		return commentService.create(userPrincipal, commentDTO, projectId, stackId, cardId);
+		return commentService.create(userPrincipal, commentDTO, cardId);
 	}
 	
 	@PutMapping("/{projectId}/{stackId}/{cardId}/{commentId}")
 	public Comment update(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(Update.class) @RequestBody CommentDTO commentDTO,
-			@PathVariable long projectId,
-			@PathVariable long stackId,
-			@PathVariable long cardId,
-			@PathVariable long commentId) {
-		return commentService.update(userPrincipal, commentDTO, projectId, stackId, cardId, commentId);
+			@Validated(Update.class) @RequestBody CommentDTO commentDTO) {
+		return commentService.update(userPrincipal, commentDTO);
 	}
 	
 	@DeleteMapping("/{projectId}/{stackId}/{cardId}/{commentId}")
-	public boolean delete(@CurrentUser UserPrincipal userPrincipal,
-			@PathVariable long projectId,
-			@PathVariable long stackId,
-			@PathVariable long cardId,
-			@PathVariable long commentId) {
-		return commentService.delete(userPrincipal, projectId, stackId, cardId, commentId);
+	public boolean delete(@CurrentUser UserPrincipal userPrincipal, @PathVariable long commentId) {
+		return commentService.delete(userPrincipal, commentId);
 	}
 	
 }

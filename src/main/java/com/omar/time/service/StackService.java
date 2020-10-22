@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.omar.time.dto.stack.StackDTO;
 import com.omar.time.model.Project;
 import com.omar.time.model.Stack;
+import com.omar.time.model.User;
 import com.omar.time.repository.ProjectRepository;
 import com.omar.time.repository.StackRepository;
 import com.omar.time.security.UserPrincipal;
@@ -28,11 +29,13 @@ public class StackService {
 	
 	
 	public StackDTO create(UserPrincipal userPrincipal, StackDTO stackDTO, long projectId) {
-		Project project = projectRepository.findById(projectId).orElseThrow(() ->
+		User user = ObjectMapperUtils.map(userPrincipal, User.class);
+		
+		Project project = projectRepository.findByIdAndCreatedByOrEditors(projectId, userPrincipal.getId(), user)
+		.orElseThrow(() ->
 			new EntityNotFoundException("errors.app.project.notFound")
 		);
 		
-		UtilService.handleUnathorized(project, userPrincipal);
 		Stack stack = ObjectMapperUtils.map(stackDTO, Stack.class);
 		stack.setProject(project);
 		stack = stackRepository.save(stack);
@@ -42,29 +45,23 @@ public class StackService {
 	
 	@Transactional
 	public StackDTO update(UserPrincipal userPrincipal, StackDTO stackDTO, long projectId, long stackId) {
-		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
-			new EntityNotFoundException("errors.app.project.notFound")
+		Stack stack = stackRepository.findStack(userPrincipal.getId(), stackDTO.getId()).orElseThrow(() ->
+			new EntityNotFoundException("errors.app.stack.notFound")
 		);
 		
-		UtilService.handleUnathorized(project, userPrincipal);
-		Stack stack = UtilService.getStackFromProject(project, stackId);
 		ObjectMapperUtils.copyPropertiesForUpdate(stackDTO, stack);
-		stack.setId(stackId);
-		stack.setProject(project);
 		stack = stackRepository.save(stack);
 		
 		return ObjectMapperUtils.map(stack, StackDTO.class);
     }
 	
 	public boolean delete(UserPrincipal userPrincipal, long projectId, long stackId) {
-		Project project = projectRepository.findById(projectId).orElseThrow(() -> 
-			new EntityNotFoundException("errors.app.project.notFound")
+		Stack stack = stackRepository.findStack(userPrincipal.getId(), stackId).orElseThrow(() ->
+			new EntityNotFoundException("errors.app.stack.notFound")
 		);
 		
-		UtilService.handleUnathorized(project, userPrincipal);
-		Stack stack = UtilService.getStackFromProject(project, stackId);
 		stack.dismissProject();
-		stackRepository.deleteById(stackId);
+		stackRepository.delete(stack);
 		
 		return true;
     }

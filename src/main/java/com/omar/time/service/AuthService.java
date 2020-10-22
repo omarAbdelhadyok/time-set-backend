@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,12 +59,17 @@ public class AuthService {
 
 	public ResponseEntity<?> login(LoginRequestDTO loginRequestDTO) {
 		//new user name password authentication object
-		Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                loginRequestDTO.getUsernameOrEmail(),
-                loginRequestDTO.getPassword()
-            )
-        );
+		Authentication authentication;
+		try {
+			authentication = authenticationManager.authenticate(
+			    new UsernamePasswordAuthenticationToken(
+			        loginRequestDTO.getUsernameOrEmail(),
+			        loginRequestDTO.getPassword()
+			    )
+			);
+		} catch (AuthenticationException e) {
+			throw new BadCredentialsException("errors.app.badCredentials");
+		}
 
 		//set authentication on security context
         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -1,6 +1,5 @@
 package com.omar.time.exception;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -122,13 +122,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		StringBuilder sb = new StringBuilder(); 
-        List<FieldError> fieldErrors = ((MethodArgumentNotValidException) ex).getBindingResult().getFieldErrors();
-        for(FieldError fieldError: fieldErrors){
-            sb.append(fieldError.getDefaultMessage());
-            sb.append(";");
-        }
-		String error = sb.toString();
+        FieldError fieldError = ((MethodArgumentNotValidException) ex).getBindingResult().getFieldErrors().get(0);
+		String error = fieldError.getDefaultMessage();
 		return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, ex));
 	}
 
@@ -205,10 +200,23 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		return buildResponseEntity(apiError);
 	}
 	
+	@ExceptionHandler(BadCredentialsException.class)
+	protected ResponseEntity<Object> handleBadCredentials(
+			BadCredentialsException ex, Locale locale) {
+		ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
+		String message = messageSource.getMessage(ex.getMessage(), null, locale);
+		apiError.setMessage(message);
+		return buildResponseEntity(apiError);
+	}
+	
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<Object> handleAll(Exception ex, WebRequest request, Locale locale) {
+		String errMessage = ex.getMessage();
+		if(ex.getMessage().isEmpty()) {
+			errMessage = "errors.app.server";
+		}
 	    ApiError apiError = new ApiError(HttpStatus.INTERNAL_SERVER_ERROR);
-	    String message = messageSource.getMessage(ex.getMessage(), null, locale);
+	    String message = messageSource.getMessage(errMessage, null, locale);
 		apiError.setMessage(message);
 	    return buildResponseEntity(apiError);
 	}
