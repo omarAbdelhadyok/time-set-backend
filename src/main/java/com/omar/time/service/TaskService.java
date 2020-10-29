@@ -22,14 +22,14 @@ public class TaskService {
 	private TaskRepository taskRepository;
 	private CardRepository cardRepository;
 	
+	
 	@Autowired
-	public TaskService(TaskRepository taskRepository,
-			CardRepository cardRepository) {
+	public TaskService(TaskRepository taskRepository, CardRepository cardRepository) {
 		this.taskRepository = taskRepository;
 		this.cardRepository = cardRepository;
 	}
-	
 		
+	@Transactional
 	public Task create(UserPrincipal userPrincipal, TaskDTO taskDTO, long cardId) {
 		Card card = cardRepository.findCard(userPrincipal.getId(), cardId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.card.notFound")
@@ -69,13 +69,9 @@ public class TaskService {
 		return taskRepository.save(task);
 	}
 	
+	@Transactional
 	public boolean delete(UserPrincipal userPrincipal, long taskId) {
-		Task task = taskRepository.findTask(userPrincipal.getId(), taskId).orElseThrow(() ->
-			new EntityNotFoundException("errors.app.task.notFound")
-		);
-		
-		task.dismissCard();
-		taskRepository.delete(task);
+		taskRepository.deleteById(taskId);
 		
 		return true;
     }

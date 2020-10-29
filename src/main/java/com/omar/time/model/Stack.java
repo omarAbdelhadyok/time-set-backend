@@ -52,13 +52,4 @@ public class Stack extends UserDateAudit {
 		this.project = project;
 	}
 	
-	public void dismissProject() {
-		this.project.dismissStack(this);
-		this.project = null;
-	}
-	
-	public void dismissCard(Card card) {
-		this.cards.remove(card);
-	}
-	
 }

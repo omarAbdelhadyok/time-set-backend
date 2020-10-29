@@ -35,6 +35,7 @@ public class CardService {
 		return ObjectMapperUtils.map(card, CardByIdDTO.class);
 	}
 	
+	@Transactional
 	public CardDTO create(UserPrincipal userPrincipal, CardDTO cardDTO, long stackId) {		
 		Stack stack = stackRepository.findStack(userPrincipal.getId(), stackId).orElseThrow(() ->
 			new EntityNotFoundException("errors.app.stack.notFound")
@@ -58,13 +59,9 @@ public class CardService {
 		
 		return ObjectMapperUtils.map(card, CardDTO.class);
     }
-		
+	
+	@Transactional
 	public boolean delete(UserPrincipal userPrincipal, long cardId) {
-		Card card = cardRepository.findCard(userPrincipal.getId(), cardId).orElseThrow(() -> 
-			new EntityNotFoundException("errors.app.card.notFound")
-		);
-		
-		card.dismissStack();
 		cardRepository.deleteById(cardId);
 		
 		return true;

@@ -49,7 +49,7 @@ public class CardController {
 		return cardService.update(userPrincipal, cardDTO);
 	}
 	
-	@DeleteMapping("/{projectId}/{stackId}/{cardId}")
+	@DeleteMapping("/{cardId}")
 	public boolean delete(@CurrentUser UserPrincipal userPrincipal, @PathVariable long cardId) {
 		return cardService.delete(userPrincipal, cardId);
 	}

@@ -20,13 +20,14 @@ public class CommentService {
 	private CommentRepository commentRepository;
 	private CardRepository cardRepository;
 	
+	
 	@Autowired
 	public CommentService(CommentRepository commentRepository, CardRepository cardRepository) {
 		this.commentRepository = commentRepository;
 		this.cardRepository = cardRepository;
 	}
 	
-	
+	@Transactional
 	public Comment create(UserPrincipal userPrincipal, CommentDTO commentDTO, long cardId) {
 		Card card = cardRepository.findCard(userPrincipal.getId(), cardId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.card.notFound")
@@ -49,13 +50,9 @@ public class CommentService {
 		return commentRepository.save(comment);
     }
 	
+	@Transactional
 	public boolean delete(UserPrincipal userPrincipal, long commentId) {
-		Comment comment = commentRepository.findComment(userPrincipal.getId(), commentId).orElseThrow(() ->
-			new EntityNotFoundException("errors.app.comment.notFound")
-		);
-		
-		comment.dismissCard();
-		commentRepository.delete(comment);
+		commentRepository.deleteById(commentId);
 				
 		return true;
     }

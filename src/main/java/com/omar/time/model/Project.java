@@ -83,9 +83,5 @@ public class Project extends UserDateAudit {
 		
 		return deleted;
 	}
-
-	public void dismissStack(Stack stack) {
-        this.stacks.remove(stack);
-    }
 	
 }

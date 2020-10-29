@@ -30,20 +30,20 @@ public class CommentController {
 		this.commentService = commentService;
 	}
 	
-	@PostMapping("/{projectId}/{stackId}/{cardId}")
+	@PostMapping("/{cardId}")
 	public Comment create(@CurrentUser UserPrincipal userPrincipal,
 			@Validated(Create.class) @RequestBody CommentDTO commentDTO,
 			@PathVariable long cardId) {
 		return commentService.create(userPrincipal, commentDTO, cardId);
 	}
 	
-	@PutMapping("/{projectId}/{stackId}/{cardId}/{commentId}")
+	@PutMapping
 	public Comment update(@CurrentUser UserPrincipal userPrincipal,
 			@Validated(Update.class) @RequestBody CommentDTO commentDTO) {
 		return commentService.update(userPrincipal, commentDTO);
 	}
 	
-	@DeleteMapping("/{projectId}/{stackId}/{cardId}/{commentId}")
+	@DeleteMapping("/{commentId}")
 	public boolean delete(@CurrentUser UserPrincipal userPrincipal, @PathVariable long commentId) {
 		return commentService.delete(userPrincipal, commentId);
 	}

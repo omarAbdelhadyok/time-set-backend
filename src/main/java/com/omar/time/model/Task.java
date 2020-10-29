@@ -59,10 +59,4 @@ public class Task extends UserDateAudit {
 		this.card = card;
 	}
 	
-	public void dismissCard() {
-		this.card.dismissStack();
-		this.card.dismissTask(this);
-		this.card = null;
-	}
-	
 }

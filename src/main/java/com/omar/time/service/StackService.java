@@ -21,13 +21,14 @@ public class StackService {
 	private StackRepository stackRepository;
 	private ProjectRepository projectRepository;
 	
+	
 	@Autowired
 	public StackService(StackRepository stackRepository, ProjectRepository projectRepository) {
 		this.stackRepository = stackRepository;
 		this.projectRepository = projectRepository;
 	}
 	
-	
+	@Transactional
 	public StackDTO create(UserPrincipal userPrincipal, StackDTO stackDTO, long projectId) {
 		User user = ObjectMapperUtils.map(userPrincipal, User.class);
 		
@@ -44,7 +45,8 @@ public class StackService {
     }
 	
 	@Transactional
-	public StackDTO update(UserPrincipal userPrincipal, StackDTO stackDTO, long projectId, long stackId) {
+	public StackDTO update(UserPrincipal userPrincipal, StackDTO stackDTO) {
+		System.out.println(stackDTO);
 		Stack stack = stackRepository.findStack(userPrincipal.getId(), stackDTO.getId()).orElseThrow(() ->
 			new EntityNotFoundException("errors.app.stack.notFound")
 		);
@@ -55,13 +57,9 @@ public class StackService {
 		return ObjectMapperUtils.map(stack, StackDTO.class);
     }
 	
-	public boolean delete(UserPrincipal userPrincipal, long projectId, long stackId) {
-		Stack stack = stackRepository.findStack(userPrincipal.getId(), stackId).orElseThrow(() ->
-			new EntityNotFoundException("errors.app.stack.notFound")
-		);
-		
-		stack.dismissProject();
-		stackRepository.delete(stack);
+	@Transactional
+	public boolean delete(UserPrincipal userPrincipal, long stackId) {
+		stackRepository.deleteById(stackId);
 		
 		return true;
     }

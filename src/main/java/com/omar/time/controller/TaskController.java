@@ -32,26 +32,26 @@ public class TaskController {
 		this.taskService = taskService;
 	}
 	
-	@PostMapping("/{projectId}/{stackId}/{cardId}")
+	@PostMapping("/{cardId}")
 	public Task create(@CurrentUser UserPrincipal userPrincipal,
 			@Validated(Create.class) @RequestBody TaskDTO taskDTO,
 			@PathVariable long cardId) {
 		return taskService.create(userPrincipal, taskDTO, cardId);
 	}
 	
-	@PutMapping("/{projectId}/{stackId}/{cardId}/{taskId}")
+	@PutMapping
 	public Task update(@CurrentUser UserPrincipal userPrincipal,
 			@Validated(Update.class) @RequestBody TaskDTO taskDTO) {
 		return taskService.update(userPrincipal, taskDTO);
 	}
 	
-	@PatchMapping("/{projectId}/{stackId}/{cardId}/{taskId}")
+	@PatchMapping
 	public Task updateStatus(@CurrentUser UserPrincipal userPrincipal,
 			@Validated(UpdateStatus.class) @RequestBody TaskDTO taskDTO) {
 		return taskService.updateStatus(userPrincipal, taskDTO);
 	}
 	
-	@DeleteMapping("/{projectId}/{stackId}/{cardId}/{taskId}")
+	@DeleteMapping("/{taskId}")
 	public boolean delete(@CurrentUser UserPrincipal userPrincipal, @PathVariable long taskId) {
 		return taskService.delete(userPrincipal, taskId);
 	}

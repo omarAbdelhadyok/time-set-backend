@@ -36,19 +36,15 @@ public class StackController {
 		return stackService.create(userPrincipal, stackDTO, projectId);
 	}
 	
-	@PutMapping("/{projectId}/{stackId}")
+	@PutMapping
 	public StackDTO update(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(Update.class) @RequestBody StackDTO stackDTO,
-			@PathVariable long projectId,
-			@PathVariable long stackId) {
-		return stackService.update(userPrincipal, stackDTO, projectId, stackId);
+			@Validated(Update.class) @RequestBody StackDTO stackDTO) {
+		return stackService.update(userPrincipal, stackDTO);
 	}
 	
-	@DeleteMapping("/{projectId}/{stackId}")
-	public boolean delete(@CurrentUser UserPrincipal userPrincipal,
-			@PathVariable long projectId,
-			@PathVariable long stackId) {
-		return stackService.delete(userPrincipal ,projectId, stackId);
+	@DeleteMapping("/{stackId}")
+	public boolean delete(@CurrentUser UserPrincipal userPrincipal, @PathVariable long stackId) {
+		return stackService.delete(userPrincipal, stackId);
 	}
 	
 }

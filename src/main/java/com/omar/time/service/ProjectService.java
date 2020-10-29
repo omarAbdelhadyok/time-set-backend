@@ -27,12 +27,12 @@ public class ProjectService {
 	private ProjectRepository projectRepository;
 	private UserRepository userRepository;
 	
+	
 	@Autowired
 	public ProjectService(ProjectRepository projectRepository, UserRepository userRepository) {
 		this.projectRepository = projectRepository;
 		this.userRepository = userRepository;
 	}
-	
 	
 	public Page<AllProjectsDTO> getAll(UserPrincipal userPrincipal, Pageable pageable) {
 		User user = ObjectMapperUtils.map(userPrincipal, User.class);
@@ -78,6 +78,7 @@ public class ProjectService {
 		return true;
 	}
 	
+	@Transactional
 	public ProjectDTO create(ProjectDTO projectDTO) {
 		Project project = ObjectMapperUtils.map(projectDTO, Project.class);
 		project.setStatus(StatusName.ACTIVE);
@@ -115,12 +116,10 @@ public class ProjectService {
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
 	}
 
+	@Transactional
     public boolean delete(UserPrincipal userPrincipal, long projectId) {
-        Project project = projectRepository.findByIdAndCreatedBy(projectId, userPrincipal.getId()).orElseThrow(() -> 
-        	new EntityNotFoundException("errors.app.project.notFound")
-		);
-		
-        projectRepository.delete(project);
+        projectRepository.deleteById(projectId);
+        
 		return true;
     }
     

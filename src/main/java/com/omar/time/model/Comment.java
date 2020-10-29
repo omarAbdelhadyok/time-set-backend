@@ -43,10 +43,4 @@ public class Comment extends UserDateAudit {
 		this.card = card;
 	}
 	
-	public void dismissCard() {
-		this.card.dismissStack();
-		this.card.dismissComment(this);
-		this.card = null;
-	}
-	
 }

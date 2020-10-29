@@ -57,19 +57,5 @@ public class Card extends UserDateAudit {
 		this.title = title;
 		this.stack = stack;
 	}
-
-	public void dismissStack() {
-		this.stack.dismissCard(this);
-		this.stack.dismissProject();
-		this.stack = null;
-	}
-	
-	public void dismissTask(Task task) {
-		this.tasks.remove(task);
-	}
-	
-	public void dismissComment(Comment comment) {
-		this.comments.remove(comment);
-	}
 	
 }
