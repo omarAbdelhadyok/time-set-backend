@@ -51,7 +51,6 @@ public class Task extends UserDateAudit {
 	
 	
 	public Task(long id, String task, LocalDateTime dueDate, StatusName status, Card card) {
-		super();
 		this.id = id;
 		this.task = task;
 		this.dueDate = dueDate;

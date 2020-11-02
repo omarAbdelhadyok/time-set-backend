@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.omar.time.dto.Create;
-import com.omar.time.dto.Update;
-import com.omar.time.dto.UpdateStatus;
+import com.omar.time.dto.task.CreateTaskDTO;
 import com.omar.time.dto.task.TaskDTO;
-import com.omar.time.model.Task;
+import com.omar.time.dto.task.UpdateTaskDTO;
+import com.omar.time.dto.task.UpdateTaskStatusDTO;
 import com.omar.time.security.CurrentUser;
 import com.omar.time.security.UserPrincipal;
 import com.omar.time.service.TaskService;
@@ -33,22 +32,22 @@ public class TaskController {
 	}
 	
 	@PostMapping("/{cardId}")
-	public Task create(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(Create.class) @RequestBody TaskDTO taskDTO,
+	public TaskDTO create(@CurrentUser UserPrincipal userPrincipal,
+			@Validated @RequestBody CreateTaskDTO createTaskDTO,
 			@PathVariable long cardId) {
-		return taskService.create(userPrincipal, taskDTO, cardId);
+		return taskService.create(userPrincipal, createTaskDTO, cardId);
 	}
 	
 	@PutMapping
-	public Task update(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(Update.class) @RequestBody TaskDTO taskDTO) {
-		return taskService.update(userPrincipal, taskDTO);
+	public TaskDTO update(@CurrentUser UserPrincipal userPrincipal,
+			@Validated @RequestBody UpdateTaskDTO updateTaskDTO) {
+		return taskService.update(userPrincipal, updateTaskDTO);
 	}
 	
 	@PatchMapping
-	public Task updateStatus(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(UpdateStatus.class) @RequestBody TaskDTO taskDTO) {
-		return taskService.updateStatus(userPrincipal, taskDTO);
+	public TaskDTO updateStatus(@CurrentUser UserPrincipal userPrincipal,
+			@Validated @RequestBody UpdateTaskStatusDTO updateTaskStatusDTO) {
+		return taskService.updateStatus(userPrincipal, updateTaskStatusDTO);
 	}
 	
 	@DeleteMapping("/{taskId}")

@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.omar.time.dto.stack.CreateStackDTO;
 import com.omar.time.dto.stack.StackDTO;
+import com.omar.time.dto.stack.UpdateStackDTO;
 import com.omar.time.model.Project;
 import com.omar.time.model.Stack;
 import com.omar.time.model.User;
@@ -29,7 +31,7 @@ public class StackService {
 	}
 	
 	@Transactional
-	public StackDTO create(UserPrincipal userPrincipal, StackDTO stackDTO, long projectId) {
+	public StackDTO create(UserPrincipal userPrincipal, CreateStackDTO createStackDTO, long projectId) {
 		User user = ObjectMapperUtils.map(userPrincipal, User.class);
 		
 		Project project = projectRepository.findByIdAndCreatedByOrEditors(projectId, userPrincipal.getId(), user)
@@ -37,7 +39,7 @@ public class StackService {
 			new EntityNotFoundException("errors.app.project.notFound")
 		);
 		
-		Stack stack = ObjectMapperUtils.map(stackDTO, Stack.class);
+		Stack stack = ObjectMapperUtils.map(createStackDTO, Stack.class);
 		stack.setProject(project);
 		stack = stackRepository.save(stack);
 		
@@ -45,13 +47,12 @@ public class StackService {
     }
 	
 	@Transactional
-	public StackDTO update(UserPrincipal userPrincipal, StackDTO stackDTO) {
-		System.out.println(stackDTO);
-		Stack stack = stackRepository.findStack(userPrincipal.getId(), stackDTO.getId()).orElseThrow(() ->
+	public StackDTO update(UserPrincipal userPrincipal, UpdateStackDTO updateStackDTO) {
+		Stack stack = stackRepository.findStack(userPrincipal.getId(), updateStackDTO.getId()).orElseThrow(() ->
 			new EntityNotFoundException("errors.app.stack.notFound")
 		);
 		
-		ObjectMapperUtils.copyPropertiesForUpdate(stackDTO, stack);
+		ObjectMapperUtils.copyPropertiesForUpdate(updateStackDTO, stack);
 		stack = stackRepository.save(stack);
 		
 		return ObjectMapperUtils.map(stack, StackDTO.class);

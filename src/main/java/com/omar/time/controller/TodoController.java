@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.omar.time.dto.Create;
-import com.omar.time.dto.Update;
+import com.omar.time.dto.todo.CreateTodoDTO;
 import com.omar.time.dto.todo.TodoDto;
+import com.omar.time.dto.todo.UpdateTodoDTO;
 import com.omar.time.security.CurrentUser;
 import com.omar.time.security.UserPrincipal;
 import com.omar.time.service.TodoService;
@@ -44,15 +44,14 @@ public class TodoController {
 //	}
 	
 	@PostMapping
-	public TodoDto create(@Validated(Create.class) @RequestBody TodoDto todoDto) {
-		return todoService.create(todoDto);
+	public TodoDto create(@Validated @RequestBody CreateTodoDTO createTodoDTO) {
+		return todoService.create(createTodoDTO);
 	}
 	
-	@PutMapping("/{id}")
+	@PutMapping
 	public TodoDto update(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(Update.class) @RequestBody TodoDto todoDto,
-			@PathVariable long id) {
-		return todoService.update(userPrincipal, id, todoDto);
+			@Validated @RequestBody UpdateTodoDTO updateTodoDTO) {
+		return todoService.update(userPrincipal, updateTodoDTO);
 	}
 	
 	@DeleteMapping("/{id}")

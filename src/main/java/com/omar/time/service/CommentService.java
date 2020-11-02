@@ -6,7 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.omar.time.dto.comment.CommentDTO;
+import com.omar.time.dto.comment.CreateCommentDTO;
+import com.omar.time.dto.comment.UpdateCommentDTO;
 import com.omar.time.model.Card;
 import com.omar.time.model.Comment;
 import com.omar.time.repository.CardRepository;
@@ -28,24 +29,25 @@ public class CommentService {
 	}
 	
 	@Transactional
-	public Comment create(UserPrincipal userPrincipal, CommentDTO commentDTO, long cardId) {
+	public Comment create(UserPrincipal userPrincipal, CreateCommentDTO createCommentDTO, long cardId) {
 		Card card = cardRepository.findCard(userPrincipal.getId(), cardId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.card.notFound")
 		);
 		
-		Comment comment = ObjectMapperUtils.map(commentDTO, Comment.class);
+		Comment comment = ObjectMapperUtils.map(createCommentDTO, Comment.class);
 		comment.setCard(card);
 		
 		return commentRepository.save(comment);
     }
 	
 	@Transactional
-	public Comment update(UserPrincipal userPrincipal, CommentDTO commentDTO) {
-		Comment comment = commentRepository.findComment(userPrincipal.getId(), commentDTO.getId()).orElseThrow(() ->
+	public Comment update(UserPrincipal userPrincipal, UpdateCommentDTO updateCommentDTO) {
+		Comment comment = commentRepository.findComment(userPrincipal.getId(), updateCommentDTO.getId())
+		.orElseThrow(() ->
 			new EntityNotFoundException("errors.app.comment.notFound")
 		);
 		
-		ObjectMapperUtils.copyPropertiesForUpdate(commentDTO, comment);
+		ObjectMapperUtils.copyPropertiesForUpdate(updateCommentDTO, comment);
 		
 		return commentRepository.save(comment);
     }

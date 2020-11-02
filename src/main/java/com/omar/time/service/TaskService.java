@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.omar.time.dto.task.CreateTaskDTO;
 import com.omar.time.dto.task.TaskDTO;
+import com.omar.time.dto.task.UpdateTaskDTO;
+import com.omar.time.dto.task.UpdateTaskStatusDTO;
 import com.omar.time.exception.BadRequestException;
 import com.omar.time.model.Card;
 import com.omar.time.model.Task;
@@ -30,43 +33,49 @@ public class TaskService {
 	}
 		
 	@Transactional
-	public Task create(UserPrincipal userPrincipal, TaskDTO taskDTO, long cardId) {
+	public TaskDTO create(UserPrincipal userPrincipal, CreateTaskDTO createTaskDTO, long cardId) {
 		Card card = cardRepository.findCard(userPrincipal.getId(), cardId).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.card.notFound")
 		);
 				
-		Task task = ObjectMapperUtils.map(taskDTO, Task.class);
+		Task task = ObjectMapperUtils.map(createTaskDTO, Task.class);
 		task.setStatus(StatusName.ACTIVE);
 		task.setCard(card);
 		
-		return taskRepository.save(task);
+		task = taskRepository.save(task);
+		
+		return ObjectMapperUtils.map(task, TaskDTO.class);
     }
 	
 	@Transactional
-	public Task update(UserPrincipal userPrincipal, TaskDTO taskDTO) {		
-		Task task = taskRepository.findTask(userPrincipal.getId(), taskDTO.getId()).orElseThrow(() ->
+	public TaskDTO update(UserPrincipal userPrincipal, UpdateTaskDTO updateTaskDTO) {		
+		Task task = taskRepository.findTask(userPrincipal.getId(), updateTaskDTO.getId()).orElseThrow(() ->
 			new EntityNotFoundException("errors.app.task.notFound")
 		);
 				
-		ObjectMapperUtils.copyPropertiesForUpdate(taskDTO, task);
+		ObjectMapperUtils.copyPropertiesForUpdate(updateTaskDTO, task);
 		
 		//cancelled or closed tasks cannot be updated
 		if(task.getStatus() != StatusName.ACTIVE) {
 			throw new BadRequestException("errors.app.task.cancelledClosedNotUpdatable");
 		}
 		
-		return taskRepository.save(task);
+		task = taskRepository.save(task);
+		
+		return ObjectMapperUtils.map(task, TaskDTO.class);
     }
 	
 	@Transactional
-	public Task updateStatus(UserPrincipal userPrincipal, TaskDTO taskDTO) {
-		Task task = taskRepository.findTask(userPrincipal.getId(), taskDTO.getId()).orElseThrow(() ->
+	public TaskDTO updateStatus(UserPrincipal userPrincipal, UpdateTaskStatusDTO updateTaskStatusDTO) {
+		Task task = taskRepository.findTask(userPrincipal.getId(), updateTaskStatusDTO.getId()).orElseThrow(() ->
 			new EntityNotFoundException("errors.app.task.notFound")
 		);
 		
-		ObjectMapperUtils.copyPropertiesForUpdate(taskDTO, task);
+		ObjectMapperUtils.copyPropertiesForUpdate(updateTaskStatusDTO, task);
 		
-		return taskRepository.save(task);
+		task = taskRepository.save(task);
+		
+		return ObjectMapperUtils.map(task, TaskDTO.class);
 	}
 	
 	@Transactional

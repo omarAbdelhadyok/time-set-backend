@@ -11,7 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.omar.time.dto.project.AllProjectsDTO;
+import com.omar.time.dto.project.CreateProjectDTO;
 import com.omar.time.dto.project.ProjectDTO;
+import com.omar.time.dto.project.UpdateProjectDTO;
+import com.omar.time.dto.project.UpdateProjectStatusDTO;
 import com.omar.time.exception.BadRequestException;
 import com.omar.time.model.Project;
 import com.omar.time.model.User;
@@ -79,20 +82,20 @@ public class ProjectService {
 	}
 	
 	@Transactional
-	public ProjectDTO create(ProjectDTO projectDTO) {
-		Project project = ObjectMapperUtils.map(projectDTO, Project.class);
+	public ProjectDTO create(CreateProjectDTO createProjectDTO) {
+		Project project = ObjectMapperUtils.map(createProjectDTO, Project.class);
 		project.setStatus(StatusName.ACTIVE);
 		project = projectRepository.save(project);
 		return ObjectMapperUtils.map(project, ProjectDTO.class);
     }
 	
 	@Transactional
-	public ProjectDTO update(UserPrincipal userPrincipal, ProjectDTO projectDTO) {
-		Project project = projectRepository.findByIdAndCreatedBy(projectDTO.getId(), userPrincipal.getId()).orElseThrow(() -> 
+	public ProjectDTO update(UserPrincipal userPrincipal, UpdateProjectDTO updateProjectDTO) {
+		Project project = projectRepository.findByIdAndCreatedBy(updateProjectDTO.getId(), userPrincipal.getId()).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.project.notFound")
 		);
 		
-		ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
+		ObjectMapperUtils.copyPropertiesForUpdate(updateProjectDTO, project);
 		
 		//check if project is not active so it cannot be updated
 		if(project.getStatus() != StatusName.ACTIVE) {
@@ -105,12 +108,13 @@ public class ProjectService {
     }
 	
 	@Transactional
-	public ProjectDTO updateStatus(UserPrincipal userPrincipal, ProjectDTO projectDTO) {
-		Project project = projectRepository.findByIdAndCreatedBy(projectDTO.getId(), userPrincipal.getId()).orElseThrow(() -> 
-			new EntityNotFoundException("errors.app.project.notFound")
+	public ProjectDTO updateStatus(UserPrincipal userPrincipal, UpdateProjectStatusDTO updateProjectStatusDTO) {
+		Project project = projectRepository.findByIdAndCreatedBy(
+			updateProjectStatusDTO.getId(), userPrincipal.getId()).orElseThrow(() -> 
+				new EntityNotFoundException("errors.app.project.notFound")
 		);
 		
-		ObjectMapperUtils.copyPropertiesForUpdate(projectDTO, project);
+		ObjectMapperUtils.copyPropertiesForUpdate(updateProjectStatusDTO, project);
 		project = projectRepository.save(project);
 		
 		return ObjectMapperUtils.map(project, ProjectDTO.class);

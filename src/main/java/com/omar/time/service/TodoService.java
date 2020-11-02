@@ -9,7 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.omar.time.dto.todo.CreateTodoDTO;
 import com.omar.time.dto.todo.TodoDto;
+import com.omar.time.dto.todo.UpdateTodoDTO;
 import com.omar.time.exception.BadRequestException;
 import com.omar.time.model.Todo;
 import com.omar.time.model.enums.TodoStatusName;
@@ -42,25 +44,24 @@ public class TodoService {
 		return ObjectMapperUtils.map(todo, TodoDto.class);
 	}
 	
-	public TodoDto create(TodoDto todoDto) {
-		Todo todo = ObjectMapperUtils.map(todoDto, Todo.class);
+	public TodoDto create(CreateTodoDTO createTodoDTO) {
+		Todo todo = ObjectMapperUtils.map(createTodoDTO, Todo.class);
 		todo.setStatus(TodoStatusName.ACTIVE);
 		todo = todoRepository.save(todo);
 		
 		return ObjectMapperUtils.map(todo, TodoDto.class);
     }
 	
-	//review this method
+	//@ToDo review this method again
 	@Transactional
-	public TodoDto update(UserPrincipal userPrincipal, long id, TodoDto todoDto) {
-		Todo todo = todoRepository.findByIdAndCreatedBy(id, userPrincipal.getId()).orElseThrow(() -> 
+	public TodoDto update(UserPrincipal userPrincipal, UpdateTodoDTO updateTodoDTO) {
+		Todo todo = todoRepository.findByIdAndCreatedBy(updateTodoDTO.getId(), userPrincipal.getId()).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.todo.notFound")
 		);
 		
 		if(todo.getStatus() != TodoStatusName.ACTIVE) {
 			throw new BadRequestException("errors.app.todo.cancelledClosedNotUpdatable");
 		}
-		todo.setId(id);		
 		todo = todoRepository.save(todo);
 		
 		return ObjectMapperUtils.map(todo, TodoDto.class);

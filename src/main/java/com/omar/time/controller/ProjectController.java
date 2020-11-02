@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.omar.time.dto.Create;
-import com.omar.time.dto.Update;
-import com.omar.time.dto.UpdateStatus;
 import com.omar.time.dto.project.AllProjectsDTO;
+import com.omar.time.dto.project.CreateProjectDTO;
 import com.omar.time.dto.project.ProjectDTO;
+import com.omar.time.dto.project.UpdateProjectDTO;
+import com.omar.time.dto.project.UpdateProjectStatusDTO;
 import com.omar.time.security.CurrentUser;
 import com.omar.time.security.UserPrincipal;
 import com.omar.time.service.ProjectService;
@@ -53,20 +53,20 @@ public class ProjectController {
 	}
 	
 	@PostMapping
-	public ProjectDTO create(@Validated(Create.class) @RequestBody ProjectDTO projectDTO) {
-		return projectService.create(projectDTO);
+	public ProjectDTO create(@Validated @RequestBody CreateProjectDTO createProjectDTO) {
+		return projectService.create(createProjectDTO);
 	}
 	
 	@PutMapping
 	public ProjectDTO update(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(Update.class) @RequestBody ProjectDTO projectDTO) {
-		return projectService.update(userPrincipal, projectDTO);
+			@Validated @RequestBody UpdateProjectDTO updateProjectDTO) {
+		return projectService.update(userPrincipal, updateProjectDTO);
 	}
 	
 	@PatchMapping
 	public ProjectDTO updateStatus(@CurrentUser UserPrincipal userPrincipal,
-			@Validated(UpdateStatus.class) @RequestBody ProjectDTO projectDTO) {
-		return projectService.updateStatus(userPrincipal, projectDTO);
+			@Validated @RequestBody UpdateProjectStatusDTO updateProjectStatusDTO) {
+		return projectService.updateStatus(userPrincipal, updateProjectStatusDTO);
 	}
 	
 	@DeleteMapping("/{id}")

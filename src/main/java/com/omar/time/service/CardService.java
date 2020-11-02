@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.omar.time.dto.card.CardByIdDTO;
 import com.omar.time.dto.card.CardDTO;
+import com.omar.time.dto.card.CreateCardDTO;
+import com.omar.time.dto.card.UpdateCardDTO;
 import com.omar.time.model.Card;
 import com.omar.time.model.Stack;
 import com.omar.time.repository.CardRepository;
@@ -36,12 +38,12 @@ public class CardService {
 	}
 	
 	@Transactional
-	public CardDTO create(UserPrincipal userPrincipal, CardDTO cardDTO, long stackId) {		
+	public CardDTO create(UserPrincipal userPrincipal, CreateCardDTO createCardDTO, long stackId) {		
 		Stack stack = stackRepository.findStack(userPrincipal.getId(), stackId).orElseThrow(() ->
 			new EntityNotFoundException("errors.app.stack.notFound")
 		);
 		
-		Card card = ObjectMapperUtils.map(cardDTO, Card.class);
+		Card card = ObjectMapperUtils.map(createCardDTO, Card.class);
 		card.setStack(stack);
 		card = cardRepository.save(card);
 		
@@ -49,12 +51,12 @@ public class CardService {
     }
 	
 	@Transactional
-	public CardDTO update(UserPrincipal userPrincipal, CardDTO cardDTO) {
-		Card card = cardRepository.findCard(userPrincipal.getId(), cardDTO.getId()).orElseThrow(() -> 
+	public CardDTO update(UserPrincipal userPrincipal, UpdateCardDTO updateCardDTO) {
+		Card card = cardRepository.findCard(userPrincipal.getId(), updateCardDTO.getId()).orElseThrow(() -> 
 			new EntityNotFoundException("errors.app.card.notFound")
 		);
 		
-		ObjectMapperUtils.copyPropertiesForUpdate(cardDTO, card);
+		ObjectMapperUtils.copyPropertiesForUpdate(updateCardDTO, card);
 		card = cardRepository.save(card);
 		
 		return ObjectMapperUtils.map(card, CardDTO.class);
