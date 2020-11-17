@@ -19,7 +19,7 @@ public class SignupRequestDTO {
     private String lastName;
 
     @NotBlank(message = "{errors.validation.user.username.notBlank}")
-    @Size(min = 3, max = 40, message = "{errors.validation.user.username.minMax}")
+    @Size(min = 3, max = 15, message = "{errors.validation.user.username.minMax}")
     private String username;
     
     @Size(max = 20, message = "{errors.validation.user.mobile.maxLength}")

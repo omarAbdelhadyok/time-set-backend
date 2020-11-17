@@ -221,6 +221,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 	    return buildResponseEntity(apiError);
 	}
 	
+//	@ExceptionHandler({ TransactionSystemException.class })
+//	public ResponseEntity<RestResponseErrorMessage> handleConstraintViolation(Exception ex, WebRequest request) {
+//	    Throwable cause = ((TransactionSystemException) ex).getRootCause();
+//	    if (cause instanceof ConstraintViolationException) {
+//	        Set<ConstraintViolation<?>> constraintViolations = ((ConstraintViolationException) cause).getConstraintViolations();
+//	        // do something here
+//	    }
+//	}
+	
 
 	private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
 		return new ResponseEntity<>(apiError, apiError.getStatus());
