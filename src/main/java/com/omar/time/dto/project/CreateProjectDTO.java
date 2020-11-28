@@ -11,7 +11,7 @@ import lombok.Setter;
 public class CreateProjectDTO {
 
 	@NotBlank(message = "{errors.validation.title.notBlank}")
-	@Size(message = "{errors.validation.title.maxLength}")
+	@Size(max = 50, message = "{errors.validation.title.maxLength}")
 	private String title;
 	
 	@NotBlank(message = "{errors.validation.description.notBlank}")

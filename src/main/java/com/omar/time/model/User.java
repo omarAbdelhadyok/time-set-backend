@@ -33,31 +33,31 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "users", uniqueConstraints = { //define unique columns
-    @UniqueConstraint(columnNames = {
-        "username"
-    }),
-    @UniqueConstraint(columnNames = {
-        "email"
-    })
+        @UniqueConstraint(columnNames = {
+                "username"
+        }),
+        @UniqueConstraint(columnNames = {
+                "email"
+        })
 })
 public class User extends DateAudit {
 
-	private static final long serialVersionUID = 527585354298775504L;
+    private static final long serialVersionUID = 527585354298775504L;
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Size(max = 40)
     private String firstName;
-    
+
     @Size(max = 40)
     private String lastName;
 
     @NotBlank
     @Size(max = 15)
     private String username;
-    
+
     @Size(max = 20)
     private String mobile;
 
@@ -76,26 +76,26 @@ public class User extends DateAudit {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = Project.class)
     @JoinTable(name = "project_editors",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id"))
-	private List<User> projects = new LinkedList<>();
-    
+    private List<Project> projects = new LinkedList<>();
+
     @NotNull
     private boolean isActivatedMail;
-    
+
     @NotNull
     private boolean deleted;
 
-	public User(String firstName, String lastName, String username, String mobile, String email, String password) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.username = username;
-		this.mobile = mobile;
-		this.email = email;
-		this.password = password;
-	}
-    
+    public User(String firstName, String lastName, String username, String mobile, String email, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.mobile = mobile;
+        this.email = email;
+        this.password = password;
+    }
+
 }

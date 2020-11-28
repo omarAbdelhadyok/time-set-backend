@@ -16,23 +16,22 @@ import com.omar.time.service.AuthService;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    
-    private AuthService authService;
-    
-    
+
+    private final AuthService authService;
+
     @Autowired
     public AuthController(AuthService authService) {
-		this.authService = authService;
-	}
+        this.authService = authService;
+    }
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-    	return this.authService.login(loginRequestDTO);
+        return this.authService.login(loginRequestDTO);
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDTO signupRequestDTO) {
-    	return this.authService.signUp(signupRequestDTO);
+        return this.authService.signUp(signupRequestDTO);
     }
-    
+
 }

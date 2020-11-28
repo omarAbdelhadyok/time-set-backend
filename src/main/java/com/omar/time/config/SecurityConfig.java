@@ -26,33 +26,33 @@ import com.omar.time.security.RestAccessDeniedHandler;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-    securedEnabled = true,
-    jsr250Enabled = true,
-    prePostEnabled = true
+        securedEnabled = true,
+        jsr250Enabled = true,
+        prePostEnabled = true
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private static final String[] AUTH_WHITELIST = {
-	        "/swagger-resources/**",
-	        "/swagger-ui/**",
-	        "/v2/api-docs",
-	        "/webjars/**"
-	};
-	
-    private CustomUserDetailsService customUserDetailsService;
-    private JwtAuthenticationEntryPoint unauthorizedHandler;
-    private RestAccessDeniedHandler accessDeniedHandler;
+    private static final String[] AUTH_WHITELIST = {
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/v2/api-docs",
+            "/webjars/**"
+    };
 
-    
+    private final CustomUserDetailsService customUserDetailsService;
+    private final JwtAuthenticationEntryPoint unauthorizedHandler;
+    private final RestAccessDeniedHandler accessDeniedHandler;
+
+
     @Autowired
     public SecurityConfig(CustomUserDetailsService customUserDetailsService,
-    		JwtAuthenticationEntryPoint unauthorizedHandler,
-    		RestAccessDeniedHandler accessDeniedHandler) {
-		this.customUserDetailsService = customUserDetailsService;
-		this.unauthorizedHandler = unauthorizedHandler;
-		this.accessDeniedHandler = accessDeniedHandler;
-	}
-    
+                          JwtAuthenticationEntryPoint unauthorizedHandler,
+                          RestAccessDeniedHandler accessDeniedHandler) {
+        this.customUserDetailsService = customUserDetailsService;
+        this.unauthorizedHandler = unauthorizedHandler;
+        this.accessDeniedHandler = accessDeniedHandler;
+    }
+
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
@@ -63,51 +63,51 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .cors()
+                .cors()
                 .and()
-            .csrf()
+                .csrf()
                 .disable()
-            .exceptionHandling()
-            	.accessDeniedHandler(accessDeniedHandler)
+                .exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler)
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
-            .sessionManagement()
+                .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-            .authorizeRequests()
+                .authorizeRequests()
                 .antMatchers("/",
-                    "/favicon.ico",
-                    "/**/*.png",
-                    "/**/*.gif",
-                    "/**/*.svg",
-                    "/**/*.jpg",
-                    "/**/*.html",
-                    "/**/*.css",
-                    "/**/*.js")
-                    .permitAll()
+                        "/favicon.ico",
+                        "/**/*.png",
+                        "/**/*.gif",
+                        "/**/*.svg",
+                        "/**/*.jpg",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js")
+                .permitAll()
                 .antMatchers("/api/auth/**", "/api/users/role", "/uploads/**")
-                    .permitAll()
+                .permitAll()
                 .antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")
-                    .permitAll()
+                .permitAll()
                 .antMatchers(HttpMethod.GET, "/api/polls/**", "/api/users/**")
-                    .permitAll()
+                .permitAll()
                 .anyRequest()
-                    .authenticated();
+                .authenticated();
 
         // Add our custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
-    
+
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers(AUTH_WHITELIST);
     }
-    
+
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
     }
-    
+
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

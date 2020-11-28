@@ -19,30 +19,23 @@ import lombok.ToString;
 @EqualsAndHashCode
 @ToString
 public class UserPrincipal implements UserDetails {
-    
-	private static final long serialVersionUID = 1096596654707987665L;
 
-	private Long id;
+    private static final long serialVersionUID = 1096596654707987665L;
 
-    private String firstName;
-    
-    private String lastName;
-
-    private String username;
-    
-    private String mobile;
-
+    private final Long id;
+    private final String firstName;
+    private final String lastName;
+    private final String username;
+    private final String mobile;
     @JsonIgnore
-    private String email;
-
+    private final String email;
     @JsonIgnore
-    private String password;
-
-    private Collection<? extends GrantedAuthority> authorities;
+    private final String password;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     public UserPrincipal(Long id, String firstName, String lastName, String username,
-    		String mobile, String email, String password,
-    		Collection<? extends GrantedAuthority> authorities) {
+                         String mobile, String email, String password,
+                         Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -55,11 +48,11 @@ public class UserPrincipal implements UserDetails {
 
     public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream().map(role ->
-            new SimpleGrantedAuthority(role.getName().name())
+                new SimpleGrantedAuthority(role.getName().name())
         ).collect(Collectors.toList());
 
         return new UserPrincipal(user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(),
-        		user.getMobile(), user.getEmail(), user.getPassword(), authorities);
+                user.getMobile(), user.getEmail(), user.getPassword(), authorities);
     }
 
     @Override
@@ -81,5 +74,5 @@ public class UserPrincipal implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-    
+
 }

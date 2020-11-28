@@ -57,7 +57,7 @@ public class UserService {
 		
 		User user = ObjectMapperUtils.map(userPrincipal, User.class);
 		
-		if(user.isActivatedMail() == true) {
+		if(user.isActivatedMail()) {
 			throw new BadRequestException("errors.app.email.alreadyVerified");
 		}
 		

@@ -23,35 +23,34 @@ import com.omar.time.service.CardService;
 @RequestMapping("/api/cards")
 public class CardController {
 
-	private CardService cardService;
-	
-	
-	@Autowired
-	public CardController(CardService cardService) {
-		this.cardService = cardService;
-	}
-	
-	@GetMapping("/{cardId}")
-	public CardByIdDTO get(@CurrentUser UserPrincipal userPrincipal, @PathVariable long cardId) {
-		return cardService.get(userPrincipal, cardId);
-	}
-	
-	@PostMapping("/{stackId}")
-	public CardDTO create(@CurrentUser UserPrincipal userPrincipal,
-			@Validated @RequestBody CreateCardDTO createCardDTO,
-			@PathVariable long stackId) {
-		return cardService.create(userPrincipal, createCardDTO, stackId);
-	}
-	
-	@PutMapping
-	public CardDTO update(@CurrentUser UserPrincipal userPrincipal, 
-			@Validated @RequestBody UpdateCardDTO updateCardDTO) {
-		return cardService.update(userPrincipal, updateCardDTO);
-	}
-	
-	@DeleteMapping("/{cardId}")
-	public boolean delete(@CurrentUser UserPrincipal userPrincipal, @PathVariable long cardId) {
-		return cardService.delete(userPrincipal, cardId);
-	}
-	
+    private final CardService cardService;
+
+    @Autowired
+    public CardController(CardService cardService) {
+        this.cardService = cardService;
+    }
+
+    @GetMapping("/{cardId}")
+    public CardByIdDTO get(@CurrentUser UserPrincipal userPrincipal, @PathVariable long cardId) {
+        return cardService.get(userPrincipal, cardId);
+    }
+
+    @PostMapping("/{stackId}")
+    public CardDTO create(@CurrentUser UserPrincipal userPrincipal,
+                          @Validated @RequestBody CreateCardDTO createCardDTO,
+                          @PathVariable long stackId) {
+        return cardService.create(userPrincipal, createCardDTO, stackId);
+    }
+
+    @PutMapping
+    public CardDTO update(@CurrentUser UserPrincipal userPrincipal,
+                          @Validated @RequestBody UpdateCardDTO updateCardDTO) {
+        return cardService.update(userPrincipal, updateCardDTO);
+    }
+
+    @DeleteMapping("/{cardId}")
+    public boolean delete(@CurrentUser UserPrincipal userPrincipal, @PathVariable long cardId) {
+        return cardService.delete(userPrincipal, cardId);
+    }
+
 }

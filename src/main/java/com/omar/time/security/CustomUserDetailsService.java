@@ -14,8 +14,12 @@ import com.omar.time.repository.UserRepository;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
+    private final UserRepository userRepository;
+
     @Autowired
-    UserRepository userRepository;
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     @Transactional

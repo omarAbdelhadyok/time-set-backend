@@ -30,78 +30,78 @@ import com.omar.time.security.JwtTokenProvider;
 
 @Service
 public class AuthService {
-	
-	private AuthenticationManager authenticationManager;
-	private JwtTokenProvider tokenProvider;
-	private UserRepository userRepository;
-	private RoleRepository roleRepository;
-	private PasswordEncoder passwordEncoder;
-	private ConfirmationTokenRepository confirmationTokenRepository;
-    private EmailSenderService emailSenderService;
-	
-	@Autowired
-	public AuthService(AuthenticationManager authenticationManager,
-			JwtTokenProvider tokenProvider,
-			UserRepository userRepository,
-			RoleRepository roleRepository,
-			PasswordEncoder passwordEncoder,
-			ConfirmationTokenRepository confirmationTokenRepository,
-			EmailSenderService emailSenderService) {
-		this.authenticationManager = authenticationManager;
-		this.tokenProvider = tokenProvider;
-		this.userRepository = userRepository;
-		this.roleRepository = roleRepository;
-		this.passwordEncoder = passwordEncoder;
-		this.confirmationTokenRepository = confirmationTokenRepository;
-		this.emailSenderService = emailSenderService;
-	}
-	
 
-	public ResponseEntity<?> login(LoginRequestDTO loginRequestDTO) {
-		//new user name password authentication object
-		Authentication authentication;
-		try {
-			authentication = authenticationManager.authenticate(
-			    new UsernamePasswordAuthenticationToken(
-			        loginRequestDTO.getUsernameOrEmail(),
-			        loginRequestDTO.getPassword()
-			    )
-			);
-		} catch (AuthenticationException e) {
-			throw new BadCredentialsException("errors.app.badCredentials");
-		}
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider tokenProvider;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final EmailSenderService emailSenderService;
 
-		//set authentication on security context
+    @Autowired
+    public AuthService(AuthenticationManager authenticationManager,
+                       JwtTokenProvider tokenProvider,
+                       UserRepository userRepository,
+                       RoleRepository roleRepository,
+                       PasswordEncoder passwordEncoder,
+                       ConfirmationTokenRepository confirmationTokenRepository,
+                       EmailSenderService emailSenderService) {
+        this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.confirmationTokenRepository = confirmationTokenRepository;
+        this.emailSenderService = emailSenderService;
+    }
+
+
+    public ResponseEntity<?> login(LoginRequestDTO loginRequestDTO) {
+        //new user name password authentication object
+        Authentication authentication;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequestDTO.getUsernameOrEmail(),
+                            loginRequestDTO.getPassword()
+                    )
+            );
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("errors.app.badCredentials");
+        }
+
+        //set authentication on security context
         SecurityContextHolder.getContext().setAuthentication(authentication);
         //generate JWT token from the token provider
         String jwt = tokenProvider.generateToken(authentication);
-        
+
         return ResponseEntity.ok(new JwtAuthDto(jwt));
-	}
-	
-	@Transactional
-	public ResponseEntity<?> signUp(SignupRequestDTO signupRequestDTO) {
-		//make sure user name and email are unique
-        if(userRepository.existsByUsername(signupRequestDTO.getUsername())) {
+    }
+
+    @Transactional
+    public ResponseEntity<?> signUp(SignupRequestDTO signupRequestDTO) {
+        //make sure user name and email are unique
+        if (userRepository.existsByUsername(signupRequestDTO.getUsername())) {
             throw new BadRequestException("errors.app.username.taken");
         }
-        if(userRepository.existsByEmail(signupRequestDTO.getEmail())) {
+        if (userRepository.existsByEmail(signupRequestDTO.getEmail())) {
             throw new BadRequestException("errors.app.email.taken");
         }
-        
+
         //saving not encrypted password to be used with signing in
         String password = signupRequestDTO.getPassword();
-        
+
         // Creating user's account
-        User user = new User(signupRequestDTO.getFirstName(), signupRequestDTO.getLastName(), signupRequestDTO.getUsername(), 
-        		signupRequestDTO.getMobile(), signupRequestDTO.getEmail(), signupRequestDTO.getPassword());
-        
+        User user = new User(signupRequestDTO.getFirstName(), signupRequestDTO.getLastName(), signupRequestDTO.getUsername(),
+                signupRequestDTO.getMobile(), signupRequestDTO.getEmail(), signupRequestDTO.getPassword());
+
         //encrypting password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         //check if role name exists
         Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
-            .orElseThrow(() -> new BadRequestException("errors.app.role.notSet"));
+                .orElseThrow(() -> new BadRequestException("errors.app.role.notSet"));
 
         user.setRoles(Collections.singleton(userRole));
         User result = userRepository.save(user);
@@ -114,13 +114,13 @@ public class AuthService {
         mailMessage.setSubject("Complete Registration");
         mailMessage.setFrom("Timeset");
         mailMessage.setText("To confirm your account, please click here : "
-        +"http://localhost:8080/api/auth/confirm-account?token="+confirmationToken.getConfirmationToken());
+                + "http://localhost:8080/api/user/confirm-account?token=" + confirmationToken.getConfirmationToken());
         emailSenderService.sendEmail(mailMessage);
-        
+
         //creating a login request object to auto login user
         LoginRequestDTO loginRequest = new LoginRequestDTO(result.getUsername(), password);
 
         return login(loginRequest);
     }
-	
+
 }

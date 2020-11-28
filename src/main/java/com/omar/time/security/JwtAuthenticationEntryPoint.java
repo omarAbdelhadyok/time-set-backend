@@ -5,13 +5,9 @@ package com.omar.time.security;
 //This method is called whenever an exception is thrown due to an unauthenticated user trying to access a resource
 //that requires authentication.
 //In this case, we’ll simply respond with a 401 error containing the exception message.
-import java.io.IOException;
-import java.io.OutputStream;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.omar.time.exception.ApiError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +17,15 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.omar.time.exception.ApiError;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
    
-	private MessageSource messageSource;
+	private final MessageSource messageSource;
 	private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
 	
 	
@@ -37,7 +35,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 	}
     
     @Override
-    public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
+    public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException {
         logger.error("Responding with unauthorized error. Message - {}", e.getMessage());     
     	
     	ApiError response = new ApiError(HttpStatus.UNAUTHORIZED);
